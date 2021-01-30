@@ -3,8 +3,8 @@
 
 # Normalize 
 
-scaled_data <- 
-data_spread %>% 
+cases_scaled <- 
+  cases_spread %>% 
   column_to_rownames("combined_key") %>% 
   apply(1, scale) %>%
   t() %>% 
@@ -14,18 +14,18 @@ data_spread %>%
 
 # Return column names lost after apply function
 
-colnames(scaled_data) <- colnames(data_spread)
+colnames(cases_scaled) <- colnames(cases_spread)
 
 
-clust_data <- 
-  scaled_data %>% 
+cases_clust <- 
+  cases_scaled %>% 
   column_to_rownames("combined_key") %>% 
   drop_na()
 
 
 # Compute Total Distance - we will want to probably limit to last two weeks
 
-total_dist <- dist(clust_data)
+total_dist <- dist(cases_clust)
 
 dist_df <- 
   as.data.frame(as.matrix(total_dist)) %>% 
