@@ -40,7 +40,14 @@ server <- function(input, output, session) {
   
   #table output
   output$test_table <- renderTable({
+    
+    validate(
+      need(!is.na(input$state), "Please select a table set")
+    )
+    
     ditto_output() %>% 
+      rename(County = comp,
+             `Distance Score` = distance) %>% 
       head(10) %>% 
       select(-county)
   })
