@@ -9,6 +9,7 @@ server <- function(input, output, session) {
     county_list_prep <- county_list$GEOID
     names(county_list_prep) <- county_list$NAME
     
+    #update selected county
     updateSelectizeInput(session,"county",choices = county_list_prep)
   })
   
@@ -18,7 +19,7 @@ server <- function(input, output, session) {
   })
   
   #ditto calculation
-  ditto_output <- eventReactive(input$go,ignoreInit = T,{
+  ditto_output <- eventReactive(input$go,ignoreNULL = F,{
     ditto(dist_df,input$county,n = 5000) %>% 
       left_join(full_county_names_list %>% select(GEOID,full_county_name),by = c("comp" = "GEOID"))
   })
@@ -48,7 +49,7 @@ server <- function(input, output, session) {
                   color = ~pal(distance),fill = ~pal(distance),
                   layerId = paste0(plot_data$GEOID,"_",plot_data$STATEFP)) %>% 
       
-      addPolygons(data = selected_county_plot_data,color = "red",weight = 1,fill = "red",stroke = F,fillOpacity = 1) %>% 
+      addPolygons(data = selected_county_plot_data,color = CRplot::CR_red(),weight = 1,fill = "red",stroke = F,fillOpacity = 1) %>% 
       
       addPolygons(data = states_list,stroke = TRUE,weight = .6, smoothFactor = 0.8, fillOpacity = 0,
                   color = "#333333",fill = F) %>% 
@@ -60,16 +61,15 @@ server <- function(input, output, session) {
       )
   })
   
+  #if map is clicked, set values
   observe({
     if(!is.null(req(input$county_map_shape_click$id))){
-      print(input$county_map_shape_click)
       
       selected_val <- str_split(input$county_map_shape_click$id,"_")[[1]]
       selected_county <- selected_val[1] %>% as.numeric()
       selected_state <- selected_val[2]
 
       shiny::updateSelectizeInput(session,"state",selected = selected_state)
-      Sys.sleep(.1)
       shiny::updateSelectizeInput(session,"county",selected = selected_county)
       
       
@@ -77,26 +77,17 @@ server <- function(input, output, session) {
   })
   
   #table output
-  output$test_table <- renderTable({
+  output$table <- renderTable({
     
     ditto_output() %>% 
-      # select(County = full_county_name,
-      #        `Distance Score` = distance) %>% 
-      tail(100)
+      head(20) %>% 
+      select(County = full_county_name,
+             `Distance Score` = distance)
+
   })
   
-  output$individual_county <- renderPlot({
+  output$trend <- renderPlotly({
     input$go
-    
-    isolate({
-    
-    county_shapes %>% 
-      filter(GEOID == input$county) %>% 
-      ggplot() +
-      geom_sf(fill = "lightblue") +
-      theme_void()
-    
-    })
+    plot_cases(data_aggregated,isolate(input$county))
   })
-  
 }

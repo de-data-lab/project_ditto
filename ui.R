@@ -1,60 +1,39 @@
-# ui <- fluidPage(
-# 
-#   titlePanel("Project Ditto"),
-#   splitLayout(
-#     tags$div(
-#       leafletOutput("county_map") %>% shinycssloaders::withSpinner(),
-#       tableOutput("test_table") %>% shinycssloaders::withSpinner()
-#       
-#     ),
-#     tags$div(
-#       fluidRow(
-#         column(5, selectizeInput("state",label = "State Select",choices = c(""))),
-#         column(5,selectizeInput("county",label = "County Select",choices = c(""))),
-#         column(2,actionButton("go","Go")),
-#       ),
-#       plotOutput("individual_county") %>% shinycssloaders::withSpinner()
-#       
-#       
-#     )
-#   )
-# )
-
 library(shinydashboardPlus)
 
 ui <- dashboardPage(
   options = list(sidebarExpandOnHover = TRUE),
-  header = dashboardHeader(),
-  sidebar = dashboardSidebar(minified = TRUE, collapsed = TRUE),
+  header = dashboardHeader(title = "DE Data Innovation Lab"),
+  sidebar = dashboardSidebar(minified = F, collapsed = T,
+                             tags$div(style = "margin-left: 20px;",
+                               tags$h2("Sourcing"),
+                               tags$p("Lorem Ipsum")
+                             )),
   body = dashboardBody(
-    fluidRow(
-      box(title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner()),
+    # fluidRow(
+      # box(width = 12,title = FALSE,
+          fluidRow(
+            column(3,splitLayout(tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo.png",height = "60px")),tags$h1("Project Ditto",style = "margin-top: 10px;"),cellWidths = c("30%","70%"))),
+            column(4,tags$p("This is a paragraph of what to expect and learn with this tool. Select a county to display similar counties based on COVID-19 trends. You can also click on any county on the map.",style = "margin-top:10px;")),
+            column(2,selectizeInput("state",label = "State Select",choices = state_list_prep,selected = 10,width = "100%")),
+            column(2,selectizeInput("county",label = "County Select",choices = c("Kent" = "10001","New Castle" = "10003","Sussex" = "10005"),selected = "10001",width = "100%")),
+            column(1,actionButton("go","Go",style = "margin-top:25px; background-color: #666666; color: white;"))
+            
+          # )
+      # )
+    ),
     
-    box(title = "Selected County",
-      fluidRow(
-        column(5,selectizeInput("state",label = "State Select",choices = state_list_prep,selected = 10)),
-        column(5,selectizeInput("county",label = "County Select",choices = c(""))),
-        column(2,actionButton("go","Go"))
-      ),
-      fluidRow(
-        column(7,plotOutput("individual_county",width = "100%") %>% shinycssloaders::withSpinner()),
-        column(5,
-               HTML("<b>Demographic Breakdown</b><br>
-                     white_pop<br>
-                     black_pop<br>
-                     asian_pop<br>
-                     hispanic_pop<br>
-                     total_pop<br>
-                     per_urban<br>
-                     per_rural"))
-      )
-    )
+    
+    fluidRow(
+      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner()),
+    
     ),
     fluidRow(
-    box(title = "Table Output",collapsible = T,tableOutput("test_table") %>% shinycssloaders::withSpinner()),
+    box(title = "Table Output",tableOutput("table") %>% shinycssloaders::withSpinner()),
+    box(title = "COVID-19 Cases Trended",plotlyOutput("trend") %>% shinycssloaders::withSpinner())
     )
     
   ),
-  controlbar = dashboardControlbar(),
+  #controlbar = dashboardControlbar(),
+  
   title = "Project Ditto",skin = "purple"
 )
