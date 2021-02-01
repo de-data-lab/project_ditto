@@ -3,7 +3,8 @@ ui <- fluidPage(
   titlePanel("Project Ditto"),
   splitLayout(
     tags$div(
-      leafletOutput("county_map") %>% shinycssloaders::withSpinner()
+      leafletOutput("county_map") %>% shinycssloaders::withSpinner(),
+      plotOutput("individual_county") %>% shinycssloaders::withSpinner()
     ),
     tags$div(
       tableOutput("test_table") %>% shinycssloaders::withSpinner(),
