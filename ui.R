@@ -32,8 +32,8 @@ ui <- dashboardPage(
     
     box(title = "Selected County",
       fluidRow(
-        column(5,selectizeInput("state",label = "State Select",choices = c(""),selected = 10)),
-        column(5,selectizeInput("county",label = "County Select",choices = c(""),selected = 10003)),
+        column(5,selectizeInput("state",label = "State Select",choices = state_list_prep,selected = 10)),
+        column(5,selectizeInput("county",label = "County Select",choices = c(""))),
         column(2,actionButton("go","Go"))
       ),
       fluidRow(
