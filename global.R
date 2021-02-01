@@ -18,3 +18,6 @@ county_list <- county_shapes %>% as.data.frame() %>% select(STATEFP,NAME,GEOID) 
 
 #read in state lookup data
 states_list <- readRDS("data/states.RDS") %>% arrange(NAME)
+
+#read in naming lookup table
+full_county_names_list <- readRDS("data/full_county_names_list.RDS")

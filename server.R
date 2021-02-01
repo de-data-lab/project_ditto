@@ -12,44 +12,61 @@ server <- function(input, output, session) {
   #populate county dropdown
   observe({
     #filter counties to relevant state
-    county_list_prep <- county_list %>% filter(STATEFP == input$state) %>% pull(NAME)
+    county_list <- county_list %>% filter(STATEFP == input$state)
     
-    updateSelectizeInput(session,"county",choices = county_list_prep,selected = "New Castle")
+    #named list for counties
+    county_list_prep <- county_list$GEOID
+    names(county_list_prep) <- county_list$NAME
+    
+    updateSelectizeInput(session,"county",choices = county_list_prep,selected = 10003)
   })
   
   observe({
-    cat("Currently Selected State: ",input$state,
-        "\nCurrently Selected County: ",input$county) %>% 
+    cat("Currently Selected State:",input$state,
+        "\nCurrently Selected County:",input$county) %>% 
       print()
   })
   
   #ditto calculation
   ditto_output <- eventReactive(input$go,ignoreInit = T,{
-    state_full_name <- states_list %>% filter(STATEFP == input$state) %>% pull(NAME)
-    county_state_input <- paste0(input$county,", ",state_full_name,", US")
-    ditto(dist_df,county_state_input,n = 100)
+    ditto(dist_df,input$county,n = 5000) %>% 
+      left_join(full_county_names_list %>% select(GEOID,full_county_name),by = c("comp" = "GEOID"))
   })
   
   #map output
   output$county_map <- renderLeaflet({
+    
+    selected_counties <- ditto_output() %>% pull(comp)
+    
+    plot_data <- county_shapes %>% 
+      #filter(GEOID %in% selected_counties) %>% 
+      left_join(ditto_output() %>% select(comp,distance),by = c("GEOID"="comp"))
+    
+    print(ditto_output())
+    
+    pal <- colorNumeric(
+      palette = "viridis",
+      domain = plot_data$distance,
+      #na.color = "#FFffffff",
+      #alpha = T
+      reverse = T
+      )
+    
     leaflet(options = leafletOptions(zoomControl = FALSE,attributionControl = FALSE,worldCopyJump = TRUE)) %>% 
       addProviderTiles(providers$CartoDB.Positron, group = "Canvas") %>%
       setView(lat = 39.8283, lng = -98.5795, zoom = 4) %>%
-      addPolygons(data = county_shapes[1,1],stroke = TRUE,weight = 1, smoothFactor = 0.2, fillOpacity = 0.3)
+      addPolygons(data = plot_data,stroke = TRUE,weight = 0, smoothFactor = 0.2, fillOpacity = 0.8,
+                  color = ~pal(distance),fill = ~pal(distance)
+                  )
   })
   
   #table output
   output$test_table <- renderTable({
     
-    validate(
-      need(!is.na(input$state), "Please select a table set")
-    )
-    
     ditto_output() %>% 
-      rename(County = comp,
-             `Distance Score` = distance) %>% 
-      head(10) %>% 
-      select(-county)
+      # select(County = full_county_name,
+      #        `Distance Score` = distance) %>% 
+      tail(100)
   })
   
   output$individual_county <- renderPlot({
@@ -57,13 +74,8 @@ server <- function(input, output, session) {
     
     isolate({
     
-    selected_county_fips <- county_list %>%
-      filter(NAME == req(input$county)) %>%
-      filter(STATEFP == req(input$state)) %>%
-      pull(GEOID)
-    
     county_shapes %>% 
-      filter(GEOID == selected_county_fips) %>% 
+      filter(GEOID == input$county) %>% 
       ggplot() +
       geom_sf(fill = "lightblue") +
       theme_void()

@@ -27,20 +27,34 @@ ui <- dashboardPage(
   header = dashboardHeader(),
   sidebar = dashboardSidebar(minified = TRUE, collapsed = TRUE),
   body = dashboardBody(
-    box(leafletOutput("county_map") %>% shinycssloaders::withSpinner()),
-    box(tableOutput("test_table") %>% shinycssloaders::withSpinner()),
+    fluidRow(
+      box(title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner()),
     
-    box(
+    box(title = "Selected County",
       fluidRow(
-        column(5,selectizeInput("state",label = "State Select",choices = c(""))),
-        column(5,selectizeInput("county",label = "County Select",choices = c(""))),
+        column(5,selectizeInput("state",label = "State Select",choices = c(""),selected = 10)),
+        column(5,selectizeInput("county",label = "County Select",choices = c(""),selected = 10003)),
         column(2,actionButton("go","Go"))
+      ),
+      fluidRow(
+        column(7,plotOutput("individual_county",width = "100%") %>% shinycssloaders::withSpinner()),
+        column(5,
+               HTML("<b>Demographic Breakdown</b><br>
+                     white_pop<br>
+                     black_pop<br>
+                     asian_pop<br>
+                     hispanic_pop<br>
+                     total_pop<br>
+                     per_urban<br>
+                     per_rural"))
       )
+    )
     ),
-    
-    box(plotOutput("individual_county") %>% shinycssloaders::withSpinner())
+    fluidRow(
+    box(title = "Table Output",collapsible = T,tableOutput("test_table") %>% shinycssloaders::withSpinner()),
+    )
     
   ),
   controlbar = dashboardControlbar(),
-  title = "DashboardPage"
+  title = "Project Ditto",skin = "purple"
 )

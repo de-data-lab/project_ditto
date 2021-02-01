@@ -20,6 +20,7 @@ data <-
 
 data_gathered <-
   data %>% 
+  mutate(fips = str_pad(fips, 5, pad = "0")) %>% 
   select(-combined_key, -province_state, -country_region, -lat, -long) %>% 
   gather(date, cases, -fips) %>% 
   mutate(date = str_remove_all(date, "x"),
