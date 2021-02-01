@@ -15,23 +15,22 @@ data <-
   select(-UID, -iso2, -iso3, -code3, -Admin2) %>% 
   clean_names()
 
-# Need to aggregate weekly, but wha's the best way of doing so with the current struc
-# Potentially need to gather, aggregate, and then spread 
+
+# gather, aggregate, and then spread 
 
 data_gathered <-
   data %>% 
-  select(-fips, -province_state, -country_region, -lat, -long) %>% 
-  gather(date, cases, -combined_key) %>% 
+  select(-combined_key, -province_state, -country_region, -lat, -long) %>% 
+  gather(date, cases, -fips) %>% 
   mutate(date = str_remove_all(date, "x"),
          date = str_replace_all(date, "_", "-"),
          date = as.Date(date, format = "%m-%d-%y"))
 
-# Note: Might want to fill in dates
 
 data_aggregated <-
   data_gathered %>% 
   mutate(week = floor_date(date, unit = "week")) %>% 
-  group_by(combined_key, week) %>% 
+  group_by(fips, week) %>% 
   mutate(cases = cases - lag(cases, 1)) %>% 
   summarize(cases = sum(cases, na.rm = T)) %>% 
   ungroup() %>% 
