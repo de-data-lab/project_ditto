@@ -5,6 +5,7 @@ plot_cases <- function(cases_aggregated, fips_code){
   ggplotly(
   cases_aggregated %>% 
     filter(fips == fips_code) %>%
+    head(-1) %>% 
     ggplot(aes(x = week,
                y = cases,
                group = 1,
