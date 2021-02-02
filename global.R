@@ -2,6 +2,7 @@ library(tidyverse)
 library(leaflet)
 library(shinycssloaders)
 library(sf)
+library(AzureStor)
 
 library(shinydashboard)
 library(shinydashboardPlus)
@@ -12,6 +13,12 @@ library(CRplot)
 #read in functions
 source("Functions/ditto.R")
 source("Functions/plot_cases.R")
+
+# Create endpoint for azure storage
+
+endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
+container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
+
 
 #read in computed values
 dist_df <- readRDS("data/dist_df.RDS")

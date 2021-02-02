@@ -1,9 +1,10 @@
-ditto <- function(dist_df, chosen_county, n = 10){
+ditto <- function(chosen_county, path_folder = "project_ditto/county_cases/", n = 10){
   
-  dist_df %>% 
-    filter(fips == chosen_county) %>% 
-    gather(comp, distance, -fips) %>% 
-    filter(comp != chosen_county) %>% 
+  path <- paste0(path_folder, chosen_county, ".csv")
+  
+  blob <- download_blob(container, src=path, dest=NULL, overwrite=FALSE)
+  
+  read_csv(blob) %>% 
     arrange(distance) %>% 
     head(n)
 

@@ -1,8 +1,5 @@
 ## Data Ingestion Script
 
-library(tidyr)
-library(tibble)
-library(dplyr)
 library(readr)
 library(stringr)
 library(janitor)
