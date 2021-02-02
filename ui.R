@@ -27,8 +27,8 @@ ui <- dashboardPage(
     
     ),
     fluidRow(
-    box(title = "Table Output",tableOutput("table") %>% shinycssloaders::withSpinner()),
-    box(title = "COVID-19 Cases Trended",plotlyOutput("trend") %>% shinycssloaders::withSpinner())
+    box(title = "Table of Similarity",tableOutput("table") %>% shinycssloaders::withSpinner()),
+    box(title = "COVID-19 Cases Trended for Selected County",plotlyOutput("trend") %>% shinycssloaders::withSpinner())
     )
     
   ),

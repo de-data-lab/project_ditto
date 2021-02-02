@@ -12,8 +12,8 @@ server <- function(input, output, session) {
   
   #ditto calculation
   ditto_output <- eventReactive(selected_county_filter(),ignoreNULL = F,{
-    ditto(dist_df,req(selected_county_filter()),n = 5000) %>% 
-      left_join(full_county_names_list %>% select(GEOID,full_county_name),by = c("comp" = "GEOID"))
+    print("ditto running")
+    ditto(req(selected_county_filter()),n = 5000)
   })
   
   #map output
@@ -67,8 +67,16 @@ server <- function(input, output, session) {
     
     ditto_output() %>% 
       head(20) %>% 
-      select(County = full_county_name,
-             `Distance Score` = distance)
+      mutate(total_pop = scales::comma(total_pop),
+             per_urban = scales::percent(per_urban/100),
+             per_rural = scales::percent(per_rural/100)) %>% 
+      select(-fips,-comp,
+             County = name,
+             Distance = distance,
+             `Total Population` = total_pop,
+             `% Urban` = per_urban,
+             `% Rural` = per_rural
+      )
 
   })
   
