@@ -9,14 +9,13 @@ ui <- dashboardPage(
                                tags$p("Lorem Ipsum")
                              )),
   body = dashboardBody(
+    leafletjs,
     # fluidRow(
       # box(width = 12,title = FALSE,
           fluidRow(
             column(3,splitLayout(tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo.png",height = "60px")),tags$h1("Project Ditto",style = "margin-top: 10px;"),cellWidths = c("30%","70%"))),
             column(4,tags$p("This is a paragraph of what to expect and learn with this tool. Select a county to display similar counties based on COVID-19 trends. You can also click on any county on the map.",style = "margin-top:10px;")),
-            column(2,selectizeInput("state",label = "State Select",choices = state_list_prep,selected = 10,width = "100%")),
-            column(2,selectizeInput("county",label = "County Select",choices = c("Kent" = "10001","New Castle" = "10003","Sussex" = "10005"),selected = "10001",width = "100%")),
-            column(1,actionButton("go","Go",style = "margin-top:25px; background-color: #666666; color: white;"))
+            column(2,selectizeInput("county",label = "County Select",choices = full_county_names_list_for_input,selected = "10003",width = "100%")),
             
           # )
       # )
@@ -33,7 +32,6 @@ ui <- dashboardPage(
     )
     
   ),
-  #controlbar = dashboardControlbar(),
   
   title = "Project Ditto",skin = "purple"
 )
