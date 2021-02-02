@@ -9,9 +9,12 @@ library(shinydashboardPlus)
 library(plotly)
 library(CRplot)
 
+library(shinyWidgets)
+
 #read in functions
 source("Functions/ditto.R")
 source("Functions/plot_cases.R")
+source("Functions/leaflet_proxy_adds.R")
 
 #read in computed values
 dist_df <- readRDS("data/dist_df.RDS")

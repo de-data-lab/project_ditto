@@ -9,6 +9,7 @@ ui <- dashboardPage(
                                tags$p("Lorem Ipsum")
                              )),
   body = dashboardBody(
+    leafletjs,
     # fluidRow(
       # box(width = 12,title = FALSE,
           fluidRow(
