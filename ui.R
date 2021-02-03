@@ -6,16 +6,20 @@ ui <- dashboardPage(
   sidebar = dashboardSidebar(minified = F, collapsed = T,
                              tags$div(style = "margin-left: 20px;",
                                tags$h2("Sourcing"),
-                               tags$p("Lorem Ipsum")
+                               tags$p("COVID-19 Case Data: ",tags$a("JHU CSSE",href ="https://github.com/CSSEGISandData/COVID-19",target="_blank"),"<br>Population/Demographic Data: Census Bureau")
                              )),
   body = dashboardBody(
     leafletjs,
     # fluidRow(
       # box(width = 12,title = FALSE,
           fluidRow(
-            column(3,splitLayout(tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo.png",height = "60px")),tags$h1("Project Ditto",style = "margin-top: 10px;"),cellWidths = c("30%","70%"))),
+            column(4,splitLayout(tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo.png",height = "60px")),tags$h1("Project Ditto",style = "margin-top: 10px;"),cellWidths = c("25%","75%"))),
             column(4,tags$p("This is a paragraph of what to expect and learn with this tool. Select a county to display similar counties based on COVID-19 trends. You can also click on any county on the map.",style = "margin-top:10px;")),
-            column(2,selectizeInput("county",label = "County Select",choices = full_county_names_list_for_input,selected = "10003",width = "100%")),
+            
+            #How similar is the COVID-19 spread of cases in x county to other counties for all time
+            #also keep the other helper text
+            
+            column(3,selectizeInput("county",label = "County Select",choices = full_county_names_list_for_input,selected = "10003",width = "100%")),
             
           # )
       # )
@@ -23,12 +27,12 @@ ui <- dashboardPage(
     
     
     fluidRow(
-      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner()),
+      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner(),htmlOutput("mouseover_county_text")),
     
     ),
     fluidRow(
     box(title = "Table of Similarity",tableOutput("table") %>% shinycssloaders::withSpinner()),
-    box(title = "COVID-19 Cases Trended for Selected County",plotlyOutput("trend") %>% shinycssloaders::withSpinner())
+    box(title = htmlOutput("plotly_title"),plotlyOutput("trend") %>% shinycssloaders::withSpinner())
     )
     
   ),

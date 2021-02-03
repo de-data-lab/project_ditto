@@ -1,26 +1,35 @@
-# Uses data_aggregated
-
-plot_cases <- function(cases_aggregated, fips_code){
+plot_cases <- function(case_data,selected_fips,comparison_fips) {
   
-  ggplotly(
-  cases_aggregated %>% 
-    filter(fips == fips_code) %>%
-    head(-1) %>% 
-    ggplot(aes(x = week,
-               y = cases,
-               group = 1,
-               text = paste0("<br><b>Week: </b>", week,
-                             "<br><b>Number of Weekly Cases: </b>", cases))) +
-    geom_line(color = CR_red()) +
-    theme_compassred() +
-    scale_y_continuous(labels = scales::comma) +
-    labs(x = "",
-         y = "Number of Weekly Cases")
-    
-    
-  , tooltip = c("text")) %>% 
+  plot_data_selected_fips <- case_data %>% 
+    filter(fips == selected_fips) %>% 
+    mutate(label = glue::glue("<b>County:</b> {full_county_name}<br>",
+                              "<b>Week:</b> {week}<br>",
+                              "<b>Cases:</b> {scales::comma(cases,1)}"))
+  
+  plot_data_comparison_fips <- case_data %>% 
+    filter(fips %in% comparison_fips) %>% 
+    mutate(label = glue::glue("<b>County:</b> {full_county_name}<br>",
+                              "<b>Week:</b> {week}<br>",
+                              "<b>Cases:</b> {scales::comma(cases,1)}"))
+  
+  #d <- highlight_key(ditto_data, ~fips)
+  
+  p <- ggplot() +
+    geom_line(data = plot_data_comparison_fips,aes(x = week, y = cases, group = fips,text = label),color = "grey",size = 0.5,alpha = .5) +
+    geom_line(data = plot_data_selected_fips,aes(x = week, y = cases, group = fips,text = label),color = CR_red(),size = 1) +
+    theme_minimal() +
+    scale_y_continuous(labels = scales::comma_format(1)) +
+    theme(
+      legend.position = "none",
+      axis.title = element_blank()
+    )
+  
+  
+  gg <- ggplotly(p,tooltip = "text") %>% 
     config(displayModeBar = F)
+  #gg <- highlight(gg, on = "plotly_hover", off = "plotly_doubleclick", color = "red")
   
-  
+  #testly
+  gg
   
 }

@@ -22,15 +22,18 @@ server <- function(input, output, session) {
     leaflet(options = leafletOptions(zoomControl = FALSE,attributionControl = FALSE,worldCopyJump = TRUE)) %>% 
       addProviderTiles(providers$CartoDB.Positron, group = "Canvas") %>%
       setView(lat = 38, lng = -95.5, zoom = 4) %>% 
-      addPolygons(data = county_shapes,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,
-                  color = "white",fill = "white",
+      addPolygons(data = county_shapes$geometry,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,opacity = 0,
+                  color = "white",fillColor = "white",
                   layerId = paste0(county_shapes$GEOID)
-                  #,label = labels
                   # ,highlight = highlightOptions(
-                  #   weight = 5,
-                  #   color = "#666",
-                  #   dashArray = "",
-                  #   fillOpacity = 0.7)
+                  #   weight = 1,
+                  #   color = "black",
+                  #   opacity = 1,
+                  #   #stroke = T,
+                  #   bringToFront = F,
+                  #   fillOpacity = .8,
+                  #   fill = T
+                  # )
       ) %>% 
       addPolygons(data = states_list,stroke = TRUE,weight = .6, smoothFactor = 0.8, fillOpacity = 0,
                   color = "#333333",fill = F)
@@ -51,7 +54,11 @@ server <- function(input, output, session) {
   })
   
   output$mouseover_county_text <- renderText({
-    mouseover_county()
+    mc <- req(mouseover_county())
+
+    HTML(glue::glue("<b>{mc[\"name\"]}:</b> {scales::comma(as.numeric(mc[\"distance\"]),.01)}<br>
+                    <b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br>
+                    <b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
   })
   
   observeEvent(selected_county_filter(),{
@@ -101,7 +108,23 @@ server <- function(input, output, session) {
   
   #plot cases over time
   output$trend <- renderPlotly({
-    plot_cases(data_aggregated,selected_county_filter())
+    comparison_fips <- ditto_output() %>% 
+      filter(comp != selected_county_filter()) %>% 
+      head(10) %>% 
+      select(comp) %>% 
+      pull()
+
+    plot_cases(data_aggregated,selected_county_filter(),comparison_fips)
+  })
+  
+  output$plotly_title <- renderText({
+    selected_county_full_name <- full_county_names_list %>% 
+      filter(GEOID == selected_county_filter()) %>% 
+      select(full_county_name) %>% 
+      unique() %>% 
+      pull()
+    
+    paste0(glue::glue("<b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: grey;\">Most Similar Counties</b>"))
   })
 
 }
