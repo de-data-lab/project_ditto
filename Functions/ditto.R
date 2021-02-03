@@ -5,7 +5,7 @@ ditto <- function(chosen_county, path_folder = "project_ditto/county_cases/", n 
   blob <- download_blob(container, src=path, dest=NULL, overwrite=FALSE)
   
   read_csv(blob) %>% 
-    arrange(distance) %>% 
+    arrange(desc(distance)) %>% 
     head(n)
 
 }
