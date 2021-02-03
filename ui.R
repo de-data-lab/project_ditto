@@ -27,11 +27,11 @@ ui <- dashboardPage(
     
     
     fluidRow(
-      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner(),htmlOutput("mouseover_county_text")),
+      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner(),tags$div(htmlOutput("mouseover_county_text"),style = "float:right;")),
     
     ),
     fluidRow(
-    box(title = "Table of Similarity",tableOutput("table") %>% shinycssloaders::withSpinner()),
+    box(title = "Table of Similarity",DT::dataTableOutput("table") %>% shinycssloaders::withSpinner()),
     box(title = htmlOutput("plotly_title"),plotlyOutput("trend") %>% shinycssloaders::withSpinner())
     )
     

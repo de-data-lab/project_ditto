@@ -3,7 +3,6 @@ library(leaflet)
 library(shinycssloaders)
 library(sf)
 library(AzureStor)
-library(lsa)
 
 
 library(shinydashboard)
@@ -13,6 +12,7 @@ library(plotly)
 library(CRplot)
 
 library(shinyWidgets)
+library(DT)
 
 #read in functions
 source("Functions/ditto.R")

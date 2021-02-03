@@ -41,18 +41,24 @@ server <- function(input, output, session) {
   
   #if map is clicked, set values
   observe({
-    if(!is.null(req(input$county_map_shape_click$id))){
-      shiny::updateSelectizeInput(session,"county",selected = input$county_map_shape_click$id)
+    clicked_county <- req(input$county_map_shape_click$id)
+    print(clicked_county)
+    
+    if(!is.null(clicked_county) && !(clicked_county %in% c("49003", "49033", "49057", "49029", "49009", "49023", "49027", "49001", "49031", "49017", "49055", "49041", "49039", "49019"))){
+      shiny::updateSelectizeInput(session,"county",selected = clicked_county)
     }
+    
   })
 
   #mouseover value for map
   mouseover_county <- reactive({
+    #print(input$county_map_shape_mouseover$id)
     if(!is.null(req(input$county_map_shape_mouseover$id))){
       ditto_output() %>% filter(comp == input$county_map_shape_mouseover$id) %>% unlist()
     }
   })
   
+  #display mouseover output
   output$mouseover_county_text <- renderText({
     mc <- req(mouseover_county())
 
@@ -61,6 +67,7 @@ server <- function(input, output, session) {
                     <b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
   })
   
+  #recolor map shapes when new county is selected
   observeEvent(selected_county_filter(),{
     print("leaflet proxy activate")
     plot_data <- county_shapes %>% 
@@ -83,26 +90,44 @@ server <- function(input, output, session) {
       addPolygons(data = selected_county_plot_data,color = CRplot::CR_red(),weight = 1,fill = "red",stroke = F,fillOpacity = 1,layerId = "selected_county_map") %>% 
       
       addLegend("bottomright", pal = pal, values = plot_data$distance,
-                title = "Distance",
-                opacity = 1,layerId = "county_map_legend"
+                title = "Similarity %",
+                opacity = 1,layerId = "county_map_legend",
+                labFormat = labelFormat(suffix = "%",transform = function(x) 100 * x)
       )
   })
   
   #table output
-  output$table <- renderTable({
+  output$table <- DT::renderDataTable(server = T,{
+    
+    total_pop_range <- ditto_output() %>% 
+      select(total_pop) %>% range()
     
     ditto_output() %>% 
-      head(20) %>% 
-      mutate(total_pop = scales::comma(total_pop,1),
-             per_urban = scales::percent(per_urban/100,.01),
-             per_rural = scales::percent(per_rural/100,.01)) %>% 
+      arrange(desc(distance)) %>% 
+      mutate(
+            #distance = scales::percent(distance,.1),
+             #total_pop = scales::comma(total_pop,1),
+             #per_urban = scales::percent(per_urban/100,.01),
+             #per_rural = scales::percent(per_rural/100,.01)
+              per_urban = per_urban/100,
+              per_rural = per_rural/100
+             ) %>% 
       select(-fips,-comp,
              County = name,
-             Distance = distance,
+             Similarity = distance,
              `Total Population` = total_pop,
              `% Urban` = per_urban,
              `% Rural` = per_rural
-      )
+      ) %>% 
+      
+      DT::datatable(rownames= FALSE,options = list(pageLength = 1000, scrollY = "300px"),) %>% 
+      DT::formatPercentage(c('Similarity','% Urban','% Rural'), 2) %>% 
+      DT::formatRound('Total Population',0) %>% 
+      DT::formatStyle(c('% Urban','% Rural'),
+                      background = styleColorBar(range(0,1), 'lightblue'),
+                      backgroundSize = '98% 88%',
+                      backgroundRepeat = 'no-repeat',
+                      backgroundPosition = 'center')
 
   })
   
