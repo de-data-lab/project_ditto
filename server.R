@@ -24,7 +24,14 @@ server <- function(input, output, session) {
       setView(lat = 38, lng = -95.5, zoom = 4) %>% 
       addPolygons(data = county_shapes,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,
                   color = "white",fill = "white",
-                  layerId = paste0(county_shapes$GEOID)) %>% 
+                  layerId = paste0(county_shapes$GEOID)
+                  #,label = labels
+                  # ,highlight = highlightOptions(
+                  #   weight = 5,
+                  #   color = "#666",
+                  #   dashArray = "",
+                  #   fillOpacity = 0.7)
+      ) %>% 
       addPolygons(data = states_list,stroke = TRUE,weight = .6, smoothFactor = 0.8, fillOpacity = 0,
                   color = "#333333",fill = F)
   })
@@ -36,9 +43,21 @@ server <- function(input, output, session) {
     }
   })
 
+  #mouseover value for map
+  mouseover_county <- reactive({
+    if(!is.null(req(input$county_map_shape_mouseover$id))){
+      ditto_output() %>% filter(comp == input$county_map_shape_mouseover$id) %>% unlist()
+    }
+  })
+  
+  output$mouseover_county_text <- renderText({
+    mouseover_county()
+  })
+  
   observeEvent(selected_county_filter(),{
     print("leaflet proxy activate")
     plot_data <- county_shapes %>% 
+      filter(GEOID != selected_county_filter()) %>% 
       left_join(ditto_output() %>% select(comp,distance),by = c("GEOID"="comp"))
     
     pal <- colorNumeric(
@@ -67,9 +86,9 @@ server <- function(input, output, session) {
     
     ditto_output() %>% 
       head(20) %>% 
-      mutate(total_pop = scales::comma(total_pop),
-             per_urban = scales::percent(per_urban/100),
-             per_rural = scales::percent(per_rural/100)) %>% 
+      mutate(total_pop = scales::comma(total_pop,1),
+             per_urban = scales::percent(per_urban/100,.01),
+             per_rural = scales::percent(per_rural/100,.01)) %>% 
       select(-fips,-comp,
              County = name,
              Distance = distance,
