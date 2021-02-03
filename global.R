@@ -3,6 +3,7 @@ library(leaflet)
 library(shinycssloaders)
 library(sf)
 library(AzureStor)
+library(lsa)
 
 library(shinydashboard)
 library(shinydashboardPlus)
