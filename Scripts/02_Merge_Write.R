@@ -20,7 +20,9 @@ distance_gathered <-
 
 distance_relevant_info <-
   distance_gathered %>% 
-  left_join(county_stats, by = c("comp" = "fips"))
+  left_join(county_stats, by = c("comp" = "fips")) %>% 
+  drop_na() %>% 
+  mutate(distance = ifelse(distance < 0 , 0, distance))
 
 
 # Write individual csv files
@@ -38,6 +40,7 @@ for (i in unique(distance_relevant_info$fips)){
   r_con <- textConnection(textConnectionValue(w_con))
   close(w_con)
   storage_upload(container, r_con, paste0("project_ditto/county_cases/", i, ".csv"))
+  Sys.sleep(.05)
   
   
 }
