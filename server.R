@@ -76,8 +76,7 @@ server <- function(input, output, session) {
     
     pal <- colorNumeric(
       palette = "viridis",
-      domain = plot_data$distance,
-      reverse = T
+      domain = plot_data$distance
     )
     
     selected_county_plot_data <- county_shapes %>%
@@ -92,7 +91,7 @@ server <- function(input, output, session) {
       addLegend("bottomright", pal = pal, values = plot_data$distance,
                 title = "Similarity %",
                 opacity = 1,layerId = "county_map_legend",
-                labFormat = labelFormat(suffix = "%",transform = function(x) 100 * x)
+                labFormat = labelFormat(suffix = "%",transform = function(x) sort(x*100, decreasing = F))
       )
   })
   
