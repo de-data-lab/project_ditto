@@ -2,6 +2,9 @@ library(shinydashboardPlus)
 legend_css_fix <- "div.info.legend.leaflet-control br {clear: both;}" # CSS to correct spacing
 legend_html_fix <- htmltools::tags$style(type = "text/css", legend_css_fix)  # Convert CSS to HTML
 
+css_fix <- "div.info.legend.leaflet-control br {clear: both;}"
+html_fix <- htmltools::tags$style(type = "text/css", css_fix)
+
 ui <- dashboardPage(
   options = list(sidebarExpandOnHover = TRUE),
   header = dashboardHeader(title = "DE Data Innovation Lab"),
@@ -31,6 +34,7 @@ ui <- dashboardPage(
     
     fluidRow(
       box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% htmlwidgets::prependContent(legend_html_fix) %>% shinycssloaders::withSpinner())
+
     ),
     fluidRow(
     box(title = "Table of Similarity",DT::dataTableOutput("table") %>% shinycssloaders::withSpinner()),
