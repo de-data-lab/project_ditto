@@ -29,15 +29,6 @@ server <- function(input, output, session) {
       addPolygons(data = county_shapes$geometry,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,opacity = 0,
                   color = "white",fillColor = "white",
                   layerId = paste0(county_shapes$GEOID)
-                  # ,highlight = highlightOptions(
-                  #   weight = 1,
-                  #   color = "black",
-                  #   opacity = 1,
-                  #   #stroke = T,
-                  #   bringToFront = F,
-                  #   fillOpacity = .8,
-                  #   fill = T
-                  # )
       ) %>% 
       addPolygons(data = states_list,stroke = TRUE,weight = .6, smoothFactor = 0.8, fillOpacity = 0,
                   color = "#333333",fill = F) %>% 
@@ -59,27 +50,31 @@ server <- function(input, output, session) {
   })
 
   #mouseover value for map
-  mouseover_county <- reactive({
+  mouseover_county <- reactiveVal("")
+   observe({
     if(!is.null(req(input$county_map_shape_mouseover$id))){
-      ditto_output() %>% filter(comp == input$county_map_shape_mouseover$id) %>% unlist()
+      mouseover_county(ditto_output() %>% filter(comp == input$county_map_shape_mouseover$id) %>% unlist())
+    } else {
+      mouseover_county(c("name" = ""))
     }
   })
   
-  #display mouseover output
-  # output$mouseover_county_text <- renderUI({
-  #   mc <- req(mouseover_county())
-  # 
-  #   HTML(glue::glue("<b>{mc[\"name\"]}<b><br>
-  #                   <b>Similarity %:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br>
-  #                   <b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br>
-  #                   <b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
-  # })
-  
+  #when county mouseover on map, adjust hover text if not null
   observe({
+    selected_county_filter()
     mc <- req(mouseover_county())
-    
+    if(mc["name"] == ""){
+      runjs("document.getElementById('mouseover_county_text').innerHTML = '';")
+    } else {
     contents <- HTML(glue::glue("<b>{mc[\"name\"]}</b><br><b>Similarity:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br><b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br><b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
     runjs(paste0("document.getElementById('mouseover_county_text').innerHTML = \"",contents,"\";"))
+    }
+  })
+  
+  #remove hover text when filter changes
+  observeEvent(input$county,{
+    mouseover_county(c("name" = ""))
+    runjs("document.getElementById('mouseover_county_text').innerHTML = '';")
   })
   
   #recolor map shapes when new county is selected
@@ -115,7 +110,7 @@ server <- function(input, output, session) {
       )
   })
   
-  #table output
+  #data table output
   output$table <- DT::renderDataTable(server = T,{
 
     tibble::tribble(
@@ -124,10 +119,6 @@ server <- function(input, output, session) {
     ) %>% 
       arrange(desc(distance)) %>% 
       mutate(
-            #distance = scales::percent(distance,.1),
-             #total_pop = scales::comma(total_pop,1),
-             #per_urban = scales::percent(per_urban/100,.01),
-             #per_rural = scales::percent(per_rural/100,.01)
               per_urban = per_urban/100,
               per_rural = per_rural/100
              ) %>% 
@@ -150,6 +141,7 @@ server <- function(input, output, session) {
 
   })
   
+  #data table proxy update
   dt_proxy <- DT::dataTableProxy("table")
   
   observe({
@@ -158,10 +150,6 @@ server <- function(input, output, session) {
     updated_data <- ditto_output() %>% 
     arrange(desc(distance)) %>% 
     mutate(
-      #distance = scales::percent(distance,.1),
-      #total_pop = scales::comma(total_pop,1),
-      #per_urban = scales::percent(per_urban/100,.01),
-      #per_rural = scales::percent(per_rural/100,.01)
       per_urban = per_urban/100,
       per_rural = per_rural/100
     ) %>% 
@@ -188,6 +176,7 @@ server <- function(input, output, session) {
     plot_cases(data_aggregated,selected_county_filter(),comparison_fips)
   })
   
+  #render plot title
   output$plotly_title <- renderText({
     selected_county_full_name <- full_county_names_list %>% 
       filter(GEOID == selected_county_filter()) %>% 
