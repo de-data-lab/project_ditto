@@ -19,7 +19,7 @@ server <- function(input, output, session) {
   #map output
   output$county_map <- renderLeaflet({
     print("rendering leaflet init")
-    leaflet(options = leafletOptions(zoomControl = FALSE,attributionControl = FALSE,worldCopyJump = TRUE)) %>% 
+    leaflet(options = leafletOptions(zoomControl = F,attributionControl = FALSE,worldCopyJump = TRUE)) %>% 
       addProviderTiles(providers$CartoDB.Positron, group = "Canvas") %>%
       setView(lat = 38, lng = -95.5, zoom = 4) %>% 
       addPolygons(data = county_shapes$geometry,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,opacity = 0,
@@ -36,7 +36,10 @@ server <- function(input, output, session) {
                   # )
       ) %>% 
       addPolygons(data = states_list,stroke = TRUE,weight = .6, smoothFactor = 0.8, fillOpacity = 0,
-                  color = "#333333",fill = F)
+                  color = "#333333",fill = F) %>% 
+      htmlwidgets::onRender("function(el, x) {
+        L.control.zoom({ position: 'topright' }).addTo(this)
+    }")
   })
   
   #if map is clicked, set values
@@ -83,7 +86,6 @@ server <- function(input, output, session) {
       filter(GEOID == isolate(selected_county_filter()))
     
     leafletProxy("county_map") %>%
-      
       setShapeStyle(data = plot_data, smoothFactor = 0.2, stroke = T, layerId = paste0(plot_data$GEOID), color = ~pal(distance),fillColor = ~pal(distance),opacity = .4,fillOpacity = .8,weight = 1) %>% 
       
       addPolygons(data = selected_county_plot_data,color = CRplot::CR_red(),weight = 1,fill = "red",stroke = F,fillOpacity = 1,layerId = "selected_county_map") %>% 
@@ -97,11 +99,11 @@ server <- function(input, output, session) {
   
   #table output
   output$table <- DT::renderDataTable(server = T,{
-    
-    total_pop_range <- ditto_output() %>% 
-      select(total_pop) %>% range()
-    
-    ditto_output() %>% 
+
+    tibble::tribble(
+      ~fips, ~comp, ~distance, ~name,  ~total_pop, ~per_urban, ~per_rural,
+      "12345","12345", 1, "Placeholder", 123456, 50, 50
+    ) %>% 
       arrange(desc(distance)) %>% 
       mutate(
             #distance = scales::percent(distance,.1),
@@ -119,7 +121,7 @@ server <- function(input, output, session) {
              `% Rural` = per_rural
       ) %>% 
       
-      DT::datatable(rownames= FALSE,options = list(pageLength = 1000, scrollY = "300px"),) %>% 
+      DT::datatable(rownames= FALSE,options = list(pageLength = 1000, scrollY = "300px",order = list(list(0, 'desc')))) %>% 
       DT::formatPercentage(c('Similarity','% Urban','% Rural'), 2) %>% 
       DT::formatRound('Total Population',0) %>% 
       DT::formatStyle(c('% Urban','% Rural'),
@@ -128,6 +130,34 @@ server <- function(input, output, session) {
                       backgroundRepeat = 'no-repeat',
                       backgroundPosition = 'center')
 
+  })
+  
+  dt_proxy <- DT::dataTableProxy("table")
+  
+  observe({
+    print("replacing data")
+    ditto_output() %>% head(5) %>% print()
+    
+    updated_data <- ditto_output() %>% 
+    arrange(desc(distance)) %>% 
+    mutate(
+      #distance = scales::percent(distance,.1),
+      #total_pop = scales::comma(total_pop,1),
+      #per_urban = scales::percent(per_urban/100,.01),
+      #per_rural = scales::percent(per_rural/100,.01)
+      per_urban = per_urban/100,
+      per_rural = per_rural/100
+    ) %>% 
+    select(-fips,-comp,
+           County = name,
+           Similarity = distance,
+           `Total Population` = total_pop,
+           `% Urban` = per_urban,
+           `% Rural` = per_rural
+    )
+    
+    DT::replaceData(dt_proxy, updated_data,rownames= FALSE,resetPaging = T,clearSelection = T)
+    
   })
   
   #plot cases over time
