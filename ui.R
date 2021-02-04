@@ -1,5 +1,8 @@
 library(shinydashboardPlus)
 
+css_fix <- "div.info.legend.leaflet-control br {clear: both;}"
+html_fix <- htmltools::tags$style(type = "text/css", css_fix)
+
 ui <- dashboardPage(
   options = list(sidebarExpandOnHover = TRUE),
   header = dashboardHeader(title = "DE Data Innovation Lab"),
@@ -27,7 +30,7 @@ ui <- dashboardPage(
     
     
     fluidRow(
-      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% shinycssloaders::withSpinner(),tags$div(htmlOutput("mouseover_county_text"),style = "float:right;")),
+      box(width = 12,title = "Heatmap of Similarity",leafletOutput("county_map") %>% htmlwidgets::prependContent(html_fix) %>% shinycssloaders::withSpinner(),tags$div(htmlOutput("mouseover_county_text"),style = "float:right;")),
     
     ),
     fluidRow(
