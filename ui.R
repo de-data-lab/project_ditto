@@ -12,8 +12,22 @@ ui <- dashboardPage(
                                       tags$br(),
                                       tags$a("Learn More",href = "https://ddil.ai",target="_blank"),
                                       tags$br(),
-                               tags$h2("Sourcing"),
-                               tags$p(HTML("<b>COVID-19 Case Data</b><br>"),tags$a("JHU CSSE",href ="https://github.com/CSSEGISandData/COVID-19",target="_blank"),HTML("<br><br><b>Population/Demographic Data</b><br>Census Bureau"))
+                                      
+                                      # Overview
+                                      tags$h2("Overview"),
+                                      tags$p("Have you ever been curious about which places in the US have experienced COVID in the same way as you? 
+                                             This tool allows you to compare your county (or any other) to all other counties and territories across the US.
+                                             Counties that are most similar to yours will be highlighted in yellow, while less similar counties will be
+                                             highlighted in purple."),
+                                      
+                                      # Directions
+                                      tags$h2("Directions"),
+                                      tags$p("Select a county from the drop down menu or by clicking on a county on the map. 
+                                             Similarity scores will be automatically updated based upon your selection."),
+                                      
+                                      # Sourcing
+                                      tags$h2("Sourcing"),
+                                      tags$p(HTML("<b>COVID-19 Case Data</b><br>"),tags$a("JHU CSSE",href ="https://github.com/CSSEGISandData/COVID-19",target="_blank"),HTML("<br><br><b>Population/Demographic Data</b><br>Census Bureau"))
                              )),
   
   #BODY
