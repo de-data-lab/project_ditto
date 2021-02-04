@@ -62,7 +62,7 @@ server <- function(input, output, session) {
   output$mouseover_county_text <- renderText({
     mc <- req(mouseover_county())
 
-    HTML(glue::glue("<b>{mc[\"name\"]}:</b> {scales::comma(as.numeric(mc[\"distance\"]),.01)}<br>
+    HTML(glue::glue("<b>{mc[\"name\"]}:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br>
                     <b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br>
                     <b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
   })
