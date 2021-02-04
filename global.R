@@ -10,6 +10,7 @@ library(CRplot)
 library(htmlwidgets)
 library(shinyWidgets)
 library(DT)
+library(shinyjs)
 
 #read in functions
 source("Functions/ditto.R")

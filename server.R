@@ -16,6 +16,10 @@ server <- function(input, output, session) {
     ditto(req(selected_county_filter()),n = 5000)
   })
   
+  layover_div <- tags$div(
+    HTML('<div><div id="mouseover_county_text" class="shiny-html-output shiny-bound-output" aria-live="polite"></div></div>')
+  )  
+  
   #map output
   output$county_map <- renderLeaflet({
     print("rendering leaflet init")
@@ -39,7 +43,8 @@ server <- function(input, output, session) {
                   color = "#333333",fill = F) %>% 
       htmlwidgets::onRender("function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this)
-    }")
+    }") %>% 
+      addControl(layover_div,position = "bottomleft")
   })
   
   #if map is clicked, set values
@@ -55,19 +60,26 @@ server <- function(input, output, session) {
 
   #mouseover value for map
   mouseover_county <- reactive({
-    #print(input$county_map_shape_mouseover$id)
     if(!is.null(req(input$county_map_shape_mouseover$id))){
       ditto_output() %>% filter(comp == input$county_map_shape_mouseover$id) %>% unlist()
     }
   })
   
   #display mouseover output
-  output$mouseover_county_text <- renderText({
+  # output$mouseover_county_text <- renderUI({
+  #   mc <- req(mouseover_county())
+  # 
+  #   HTML(glue::glue("<b>{mc[\"name\"]}<b><br>
+  #                   <b>Similarity %:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br>
+  #                   <b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br>
+  #                   <b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
+  # })
+  
+  observe({
     mc <- req(mouseover_county())
-
-    HTML(glue::glue("<b>{mc[\"name\"]}:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br>
-                    <b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br>
-                    <b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
+    
+    contents <- HTML(glue::glue("<b>{mc[\"name\"]}</b><br><b>Similarity:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br><b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br><b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
+    runjs(paste0("document.getElementById('mouseover_county_text').innerHTML = \"",contents,"\";"))
   })
   
   #recolor map shapes when new county is selected
@@ -82,6 +94,12 @@ server <- function(input, output, session) {
       domain = plot_data$distance
     )
     
+    legend_pal <- colorNumeric(
+      palette = "viridis",
+      domain = plot_data$distance,
+      reverse = T
+    )
+    
     selected_county_plot_data <- county_shapes %>%
       filter(GEOID == isolate(selected_county_filter()))
     
@@ -90,10 +108,10 @@ server <- function(input, output, session) {
       
       addPolygons(data = selected_county_plot_data,color = CRplot::CR_red(),weight = 1,fill = "red",stroke = F,fillOpacity = 1,layerId = "selected_county_map") %>% 
       
-      addLegend("bottomright", pal = pal, values = plot_data$distance,
-                title = "Similarity %",
+      addLegend("bottomright", pal = legend_pal, values = plot_data$distance,
+                title = "Similarity",
                 opacity = 1,layerId = "county_map_legend",
-                labFormat = labelFormat(suffix = "%",transform = function(x) sort(x*100, decreasing = F))
+                labFormat = labelFormat(suffix = "%",transform = function(x) sort(x*100, decreasing = T))
       )
   })
   
@@ -135,8 +153,7 @@ server <- function(input, output, session) {
   dt_proxy <- DT::dataTableProxy("table")
   
   observe({
-    print("replacing data")
-    ditto_output() %>% head(5) %>% print()
+    print("replacing data in datatable")
     
     updated_data <- ditto_output() %>% 
     arrange(desc(distance)) %>% 
