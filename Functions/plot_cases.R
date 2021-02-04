@@ -28,7 +28,7 @@ plot_cases <- function(case_data,selected_fips,comparison_fips) {
   
   gg <- ggplotly(p,tooltip = "text") %>% 
     config(displayModeBar = F)
-  gg <- highlight(gg, on = "plotly_hover", off = "plotly_doubleclick", color = cb_gray())
+  gg <- highlight(gg, on = "plotly_hover", off = "plotly_doubleclick", color = cb_gray(),opacityDim = getOption("opacityDim", 0.5))
   
   #testly
   gg

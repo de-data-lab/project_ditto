@@ -10,6 +10,9 @@ server <- function(input, output, session) {
     cat("Currently Selected County:",selected_county_filter(),"\n")
   })
   
+  #change background color of dropdown
+  shinyjs::runjs("document.querySelector('div.selectize-input').style.backgroundColor = '#ECF0F5';")
+  
   #ditto calculation
   ditto_output <- eventReactive(selected_county_filter(),ignoreNULL = F,{
     print("ditto running")
@@ -17,7 +20,7 @@ server <- function(input, output, session) {
   })
   
   layover_div <- tags$div(
-    HTML('<div><div id="mouseover_county_text" class="shiny-html-output shiny-bound-output" aria-live="polite"></div></div>')
+    HTML('<div id="mouseover_county_text" class="shiny-html-output shiny-bound-output" aria-live="polite"></div>')
   )  
   
   #map output
@@ -35,7 +38,7 @@ server <- function(input, output, session) {
       htmlwidgets::onRender("function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this)
     }") %>% 
-      addControl(layover_div,position = "bottomleft")
+      addControl(layover_div,position = "bottomleft",layerId = "mouseover_layer")
   })
   
   #if map is clicked, set values
@@ -130,7 +133,7 @@ server <- function(input, output, session) {
              `% Rural` = per_rural
       ) %>% 
       
-      DT::datatable(rownames= FALSE,options = list(pageLength = 1000, scrollY = "300px",order = list(list(0, 'desc')))) %>% 
+      DT::datatable(rownames= FALSE,options = list(pageLength = 500, scrollY = "300px",order = list(list(0, 'desc')))) %>% 
       DT::formatPercentage(c('Similarity','% Urban','% Rural'), 2) %>% 
       DT::formatRound('Total Population',0) %>% 
       DT::formatStyle(c('% Urban','% Rural'),
@@ -184,7 +187,7 @@ server <- function(input, output, session) {
       unique() %>% 
       pull()
     
-    paste0(glue::glue("<b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: grey;\">Most Similar Counties</b>"))
+    paste0(glue::glue("New COVID-19 Cases in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
   })
 
 }
