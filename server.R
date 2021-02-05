@@ -10,6 +10,11 @@ server <- function(input, output, session) {
     cat("Currently Selected County:",selected_county_filter(),"\n")
   })
   
+  #when you click the county filter, remove the text
+  onclick("county", {
+    updateSelectizeInput(session, "county", selected = "")
+  })
+  
   #change background color of dropdown
   shinyjs::runjs("document.querySelector('div.selectize-input').style.backgroundColor = '#ECF0F5';")
   
@@ -26,8 +31,8 @@ server <- function(input, output, session) {
   #map output
   output$county_map <- renderLeaflet({
     print("rendering leaflet init")
-    leaflet(options = leafletOptions(zoomControl = F,attributionControl = FALSE,worldCopyJump = TRUE)) %>% 
-      addProviderTiles(providers$CartoDB.Positron, group = "Canvas") %>%
+    leaflet(options = leafletOptions(zoomControl = F,attributionControl = FALSE,worldCopyJump = TRUE, scrollWheelZoom = F)) %>% 
+      addProviderTiles(providers$CartoDB.Positron, group = "Canvas",options = providerTileOptions(minZoom = 4)) %>%
       setView(lat = 38, lng = -95.5, zoom = 4) %>% 
       addPolygons(data = county_shapes$geometry,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,opacity = 0,
                   color = "white",fillColor = "white",
