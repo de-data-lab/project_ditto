@@ -46,7 +46,7 @@ ui <- dashboardPage(
     
     #HEATMAP OF SIMILARITY
     fluidRow(
-      box(width = 12,title = HTML("Heatmap of Similarity <span style=\"font-size: 12px;\">(click on any county to change selection)</span>"),leafletOutput("county_map") %>% htmlwidgets::prependContent(legend_html_fix) %>% shinycssloaders::withSpinner())
+      box(width = 12,title = HTML("Heatmap of Similarity <span style=\"font-size: 12px;\">(click on any county to change selection, hover over any county to see comparison)</span>"),leafletOutput("county_map") %>% htmlwidgets::prependContent(legend_html_fix) %>% shinycssloaders::withSpinner())
     ),
     
     #TABLE OF SIMILARITY AND PLOT
