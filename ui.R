@@ -2,6 +2,16 @@ library(shinydashboardPlus)
 legend_css_fix <- "div.info.legend.leaflet-control br {clear: both;}" # CSS to correct spacing
 legend_html_fix <- htmltools::tags$style(type = "text/css", legend_css_fix)  # Convert CSS to HTML
 
+#this code changes the selectize input if there is a county in the URL query when page loads
+jscode <- '
+shinyjs.init = function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const county = urlParams.get("county");
+  if(urlParams.has("county")) {
+    $("#county").selectize()[0].selectize.setValue(county);
+  }
+}'
+
 ui <- dashboardPage(
   header = dashboardHeader(title = "DE Data Innovation Lab"),
   
@@ -34,6 +44,7 @@ ui <- dashboardPage(
   body = dashboardBody(
     leafletjs,
     useShinyjs(),
+    extendShinyjs(text = jscode, functions = c()),
     tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
     
     #HOW SIMILAR IS THE SPREAD OF COVID-19 IN X COUNTY TO OTHER COUNTIES IN THE UNITED STATES?

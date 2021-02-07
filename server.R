@@ -5,6 +5,11 @@ server <- function(input, output, session) {
     req(input$county)
   })
   
+  #when a county is selected, update query param
+  observeEvent(selected_county_filter(),{
+    updateQueryString(paste0("?county=",selected_county_filter()))
+  })
+  
   #print out currently selected county
   observe({
     cat("Currently Selected County:",selected_county_filter(),"\n")
