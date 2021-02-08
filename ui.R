@@ -1,4 +1,3 @@
-library(shinydashboardPlus)
 legend_css_fix <- "div.info.legend.leaflet-control br {clear: both;}" # CSS to correct spacing
 legend_html_fix <- htmltools::tags$style(type = "text/css", legend_css_fix)  # Convert CSS to HTML
 
@@ -35,6 +34,11 @@ ui <- dashboardPage(
                                       tags$p("Select a county from the drop down menu or by clicking on a county on the map. 
                                              Similarity scores will be automatically updated based upon your selection."),
                                       
+                                      # Sharing
+                                      tags$h2("Sharing"),
+                                      tags$p("Click the button below to share the selected county view with others!"),
+                                      actionButton("copy_link","Copy Link",icon = icon("clipboard")),
+                                      
                                       # Sourcing
                                       tags$h2("Sourcing"),
                                       tags$p(HTML("<b>COVID-19 Case Data</b><br>"),tags$a("JHU CSSE",href ="https://github.com/CSSEGISandData/COVID-19",target="_blank"),HTML("<br><br><b>Population/Demographic Data</b><br>Census Bureau"))
@@ -44,6 +48,7 @@ ui <- dashboardPage(
   body = dashboardBody(
     leafletjs,
     useShinyjs(),
+    useShinyalert(),
     extendShinyjs(text = jscode, functions = c()),
     tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
     

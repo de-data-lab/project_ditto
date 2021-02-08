@@ -11,6 +11,7 @@ library(htmlwidgets)
 library(shinyWidgets)
 library(DT)
 library(shinyjs)
+library(shinyalert)
 
 #read in functions
 source("Functions/ditto.R")
@@ -31,7 +32,6 @@ states_list <- readRDS("data/states.RDS") %>% arrange(NAME)
 #read in naming lookup table
 full_county_names_list <- readRDS("data/full_county_names_list.RDS")
 full_county_names_list_for_input <- split(full_county_names_list %>% select(full_county_name,GEOID) %>% deframe(),full_county_names_list$STATE_NAME)
-
 
 #read in covid cases
 data_aggregated <- readRDS("data/data_aggregated.RDS")

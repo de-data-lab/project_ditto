@@ -6,8 +6,13 @@ server <- function(input, output, session) {
   })
   
   #when a county is selected, update query param
-  observeEvent(selected_county_filter(),{
-    updateQueryString(paste0("?county=",selected_county_filter()))
+  #issue with shinyapps deployment here
+  # observeEvent(selected_county_filter(),ignoreInit = T,ignoreNULL = T,{
+  #   updateQueryString(paste0("?county=",selected_county_filter()))
+  # })
+  
+  observeEvent(input$copy_link,{
+    shinyalert(title = "Copy The Link Below", text=paste0("https://compassred.shinyapps.io/project_ditto/?county=",selected_county_filter()), type = "info")
   })
   
   #print out currently selected county
@@ -29,6 +34,7 @@ server <- function(input, output, session) {
     ditto(req(selected_county_filter()),n = 5000)
   })
   
+  #define layover html div to add to map
   layover_div <- tags$div(
     HTML('<div id="mouseover_county_text" class="shiny-html-output shiny-bound-output" aria-live="polite"></div>')
   )  
