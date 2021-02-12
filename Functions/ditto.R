@@ -1,4 +1,6 @@
 ditto <- function(chosen_county, path_folder = "project_ditto/county_cases/", n = 10){
+  endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
+  container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
   
   path <- paste0(path_folder, chosen_county, ".csv")
   
