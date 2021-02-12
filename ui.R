@@ -56,7 +56,7 @@ ui <- dashboardPage(
           fluidRow(
             tags$div(class="col-lg-5 col-md-4 col-sm-3",tags$p("How similar is the spread of COVID-19 in ",style = "padding-top:4px; font-size: 20px; text-align: right;; font-weight: bold;color: #666666;")),
 
-            tags$div(class="col-lg-2 col-md-3 col-sm-4",tags$div(selectizeInput("county",label = NULL,choices = full_county_names_list_for_input,selected = "10003",width = "100%"),style = "text-align: center;")),
+            tags$div(class="col-lg-2 col-md-3 col-sm-4",tags$div(selectizeInput("county",label = NULL,choices = full_county_names_list_for_input,selected = "10003",width = "100%",options = list(placeholder="Type or scroll to select a county")),style = "text-align: center;")),
             tags$div(class="col-lg-4 col-md-4 col-sm-3",tags$p("to other counties in the United States?",style = "padding-top:4px; font-size: 20px; text-align: left; font-weight: bold; color: #666666;")),
     ),
     
