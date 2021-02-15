@@ -4,6 +4,8 @@ data_sparklines <- readRDS("data/data_aggregated.RDS") %>%
   summarize(
     sparkline = spk_chr(
       cases, type ="line",
+      width = 100,
+      height = 30,
       chartRangeMin = 0, chartRangeMax = max(cases),
       fillColor = "#FFFFFF00", #transparent fill
       lineColor = "#888888", #lightgrey line

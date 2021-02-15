@@ -100,12 +100,7 @@ server <- function(input, output, session) {
   observeEvent(selected_county_filter(),{
     print("leaflet proxy activate")
     plot_data <- county_shapes %>% 
-      #filter(GEOID != selected_county_filter()) %>% 
-      left_join(ditto_output() %>% select(comp,distance),by = c("GEOID"="comp")) %>% 
-      
-      #hide the selected county
-      mutate(fill_opacity_value = ifelse(GEOID == selected_county_filter(),0,.8),
-             opacity_value = ifelse(GEOID == selected_county_filter(),0,.4))
+      left_join(ditto_output() %>% select(comp,distance),by = c("GEOID"="comp"))
     
     pal <- colorNumeric(
       palette = "viridis",
@@ -122,9 +117,9 @@ server <- function(input, output, session) {
       filter(GEOID == isolate(selected_county_filter()))
     
     leafletProxy("county_map") %>%
-      setShapeStyle(data = plot_data, smoothFactor = 0.2, stroke = T, layerId = paste0(plot_data$GEOID), color = ~pal(distance),fillColor = ~pal(distance),opacity = ~opacity_value,fillOpacity = ~fill_opacity_value,weight = 1) %>% 
+      setShapeStyle(data = plot_data, smoothFactor = 0.2, stroke = T, layerId = paste0(plot_data$GEOID), color = ~pal(distance),fillColor = ~pal(distance),opacity = .4,fillOpacity = .8,weight = 1) %>% 
       
-      addPolygons(data = selected_county_plot_data,color = CRplot::CR_red(),weight = 1,fill = "red",stroke = F,fillOpacity = 1,layerId = "selected_county_map") %>% 
+      addPolygons(data = selected_county_plot_data,color = CRplot::CR_red(),weight = 1.5,fill = F,stroke = T,fillOpacity = 0,opacity = 1,layerId = "selected_county_map") %>% 
       
       addLegend("bottomright", pal = legend_pal, values = plot_data$distance,
                 title = "Similarity",
