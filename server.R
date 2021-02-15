@@ -146,7 +146,7 @@ server <- function(input, output, session) {
              Similarity = distance,
              `Total Population` = total_pop,
              `Total Cases` = total_cases,
-             Trend = sparkline
+             `Case Trend` = sparkline
       ) %>% 
       
       DT::datatable(rownames= FALSE,escape = FALSE,options = list(pageLength = 100, scrollY = "300px",order = list(list(0, 'desc')),fnDrawCallback = htmlwidgets::JS(
@@ -155,7 +155,7 @@ server <- function(input, output, session) {
       spk_add_deps() %>% 
       DT::formatPercentage(c('Similarity'), 2) %>% 
       DT::formatRound(c('Total Population','Total Cases'),0) %>% 
-      DT::formatString(c('County','Trend'))
+      DT::formatString(c('County','Case Trend'))
 
   })
   
@@ -173,7 +173,7 @@ server <- function(input, output, session) {
            Similarity = distance,
            `Total Population` = total_pop,
            `Total Cases` = total_cases,
-           Trend = sparkline
+           `Case Trend` = sparkline
     )
     
     DT::replaceData(dt_proxy, updated_data,rownames= FALSE,resetPaging = T,clearSelection = T)
