@@ -11,42 +11,42 @@ shinyjs.init = function() {
   }
 }'
 
-ui <- dashboardPage(
-  header = dashboardHeader(title = HTML("<a href='https://ddil.ai' target='_blank'><div style='color:white; text-decoration: none; background-color: none;'>DE Data Innovation Lab</div></a>")),
+ui <- navbarPage(theme = shinytheme("flatly"),
+  title = HTML("<a href='https://ddil.ai' target='_blank'><div style='color:white; text-decoration: none; background-color: none;'>DE Data Innovation Lab</div></a>"),
+  
   
   #SIDEBAR
-  sidebar = dashboardSidebar(minified = F, collapsed = T,
-                             tags$div(style = "margin: 20px;",
-                                      tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo_white.png",height = "75px",style = "margin-bottom:10px;")),
-                                      tags$br(),
-                                      tags$a("Learn More",href = "https://ddil.ai",target="_blank"),
-                                      tags$br(),
-                                      
-                                      # Overview
-                                      tags$h2("Overview"),
-                                      tags$p("Have you ever been curious about which places in the US have experienced COVID in the same way as you? 
-                                             This tool allows you to compare your county (or any other) to all other counties and territories across the US.
-                                             Counties that are most similar to yours will be highlighted in yellow, while less similar counties will be
-                                             highlighted in purple."),
-                                      
-                                      # Directions
-                                      tags$h2("Directions"),
-                                      tags$p("Select a county from the drop down menu or by clicking on a county on the map. 
-                                             Similarity scores will be automatically updated based upon your selection."),
-                                      
-                                      # Sourcing
-                                      tags$h2("Sourcing"),
-                                      tags$p(HTML("<b>COVID-19 Case Data</b><br>"),tags$a("JHU CSSE",href ="https://github.com/CSSEGISandData/COVID-19",target="_blank"),HTML("<br><br><b>Population/Demographic Data</b><br>Census Bureau"))
-                             )),
+  # sidebar = dashboardSidebar(minified = F, collapsed = T,
+  #                            tags$div(style = "margin: 20px;",
+  #                                     tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo_white.png",height = "75px",style = "margin-bottom:10px;")),
+  #                                     tags$br(),
+  #                                     tags$a("Learn More",href = "https://ddil.ai",target="_blank"),
+  #                                     tags$br(),
+  #                                     
+  #                                     # Overview
+  #                                     tags$h2("Overview"),
+  #                                     tags$p("Have you ever been curious about which places in the US have experienced COVID in the same way as you? 
+  #                                            This tool allows you to compare your county (or any other) to all other counties and territories across the US.
+  #                                            Counties that are most similar to yours will be highlighted in yellow, while less similar counties will be
+  #                                            highlighted in purple."),
+  #                                     
+  #                                     # Directions
+  #                                     tags$h2("Directions"),
+  #                                     tags$p("Select a county from the drop down menu or by clicking on a county on the map. 
+  #                                            Similarity scores will be automatically updated based upon your selection."),
+  #                                     
+  #                                     # Sourcing
+  #                                     tags$h2("Sourcing"),
+  #                                     tags$p(HTML("<b>COVID-19 Case Data</b><br>"),tags$a("JHU CSSE",href ="https://github.com/CSSEGISandData/COVID-19",target="_blank"),HTML("<br><br><b>Population/Demographic Data</b><br>Census Bureau"))
+  #                            )),
   
   #BODY
-  body = dashboardBody(
-    leafletjs,
-    useShinyjs(),
-    useShinyalert(),
-    extendShinyjs(text = jscode, functions = c()),
-    tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
-    
+  tabPanel("Similarity",
+           leafletjs,
+           useShinyjs(),
+           useShinyalert(),
+           extendShinyjs(text = jscode, functions = c()),
+           tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
     #HOW SIMILAR IS THE SPREAD OF COVID-19 IN X COUNTY TO OTHER COUNTIES IN THE UNITED STATES?
           fluidRow(
             tags$div(class="col-lg-5 col-md-4 col-sm-3",tags$p("How similar is the spread of COVID-19 in ",style = "padding-top:4px; font-size: 20px; text-align: right;; font-weight: bold;color: #666666;")),
@@ -67,6 +67,11 @@ ui <- dashboardPage(
     )
     
   ),
-  
-  title = "COVID-19 County Similarity Tool",skin = "purple"
+  tabPanel("FAQ",
+           tags$h2("Lorem Ipsum"),
+           tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
+           
+           tags$h2("Sed ut Perspiciatis"),
+           tags$p("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+           )
 )
