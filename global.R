@@ -13,6 +13,8 @@ library(DT)
 library(shinyjs)
 library(shinyalert)
 
+library(sparkline)
+
 #read in functions
 source("Functions/ditto.R")
 source("Functions/plot_cases.R")
@@ -35,3 +37,6 @@ full_county_names_list_for_input <- split(full_county_names_list %>% select(full
 
 #read in covid cases
 data_aggregated <- readRDS("data/data_aggregated.RDS")
+
+#read in sparkline df
+data_sparklines <- readRDS("data/data_sparklines.RDS")

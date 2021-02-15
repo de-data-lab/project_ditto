@@ -85,7 +85,7 @@ server <- function(input, output, session) {
     if(mc["name"] == ""){
       runjs("document.getElementById('mouseover_county_text').innerHTML = '';")
     } else {
-    contents <- HTML(glue::glue("<b>{mc[\"name\"]}</b><br><b>Similarity:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br><b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}<br><b>% Urban/Rural:</b> {scales::comma(as.numeric(mc[\"per_urban\"]),.01)}% / {scales::comma(as.numeric(mc[\"per_rural\"]),.01)}%<br>"))
+    contents <- HTML(glue::glue("<b>{mc[\"name\"]}</b><br><b>Similarity:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br><b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}"))
     runjs(paste0("document.getElementById('mouseover_county_text').innerHTML = \"",contents,"\";"))
     }
   })
@@ -137,30 +137,25 @@ server <- function(input, output, session) {
   output$table <- DT::renderDataTable(server = T,{
 
     tibble::tribble(
-      ~fips, ~comp, ~distance, ~name,  ~total_pop, ~per_urban, ~per_rural,
-      "12345","12345", 1, "Placeholder", 123456, 50, 50
+      ~fips, ~comp, ~distance, ~name,  ~total_pop,~total_cases,~sparkline,
+      "12345","12345", 1, "Placeholder", 123456,1500, "<div></div>"
     ) %>% 
       arrange(desc(distance)) %>% 
-      mutate(
-              per_urban = per_urban/100,
-              per_rural = per_rural/100
-             ) %>% 
       select(-fips,-comp,
              County = name,
              Similarity = distance,
              `Total Population` = total_pop,
-             `% Urban` = per_urban,
-             `% Rural` = per_rural
+             `Total Cases` = total_cases,
+             Trend = sparkline
       ) %>% 
       
-      DT::datatable(rownames= FALSE,options = list(pageLength = 500, scrollY = "300px",order = list(list(0, 'desc')))) %>% 
-      DT::formatPercentage(c('Similarity','% Urban','% Rural'), 2) %>% 
-      DT::formatRound('Total Population',0) %>% 
-      DT::formatStyle(c('% Urban','% Rural'),
-                      background = styleColorBar(range(0,1), 'lightblue'),
-                      backgroundSize = '98% 88%',
-                      backgroundRepeat = 'no-repeat',
-                      backgroundPosition = 'center')
+      DT::datatable(rownames= FALSE,escape = FALSE,options = list(pageLength = 100, scrollY = "300px",order = list(list(0, 'desc')),fnDrawCallback = htmlwidgets::JS(
+        'function(){HTMLWidgets.staticRender();}'
+      ))) %>% 
+      spk_add_deps() %>% 
+      DT::formatPercentage(c('Similarity'), 2) %>% 
+      DT::formatRound(c('Total Population','Total Cases'),0) %>% 
+      DT::formatString(c('County','Trend'))
 
   })
   
@@ -172,16 +167,13 @@ server <- function(input, output, session) {
     
     updated_data <- ditto_output() %>% 
     arrange(desc(distance)) %>% 
-    mutate(
-      per_urban = per_urban/100,
-      per_rural = per_rural/100
-    ) %>% 
-    select(-fips,-comp,
+    left_join(data_sparklines %>% select(fips,total_cases,sparkline),by = c("comp" = "fips")) %>% 
+    select(-fips,-comp,-per_urban,-per_rural,
            County = name,
            Similarity = distance,
            `Total Population` = total_pop,
-           `% Urban` = per_urban,
-           `% Rural` = per_rural
+           `Total Cases` = total_cases,
+           Trend = sparkline
     )
     
     DT::replaceData(dt_proxy, updated_data,rownames= FALSE,resetPaging = T,clearSelection = T)
