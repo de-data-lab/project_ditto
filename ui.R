@@ -12,7 +12,7 @@ shinyjs.init = function() {
 }'
 
 ui <- dashboardPage(
-  header = dashboardHeader(title = "DE Data Innovation Lab"),
+  header = dashboardHeader(title = HTML("<a href='https://ddil.ai' target='_blank'><div style='color:white; text-decoration: none; background-color: none;'>DE Data Innovation Lab</div></a>")),
   
   #SIDEBAR
   sidebar = dashboardSidebar(minified = F, collapsed = T,
