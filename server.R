@@ -11,9 +11,7 @@ server <- function(input, output, session) {
   #   updateQueryString(paste0("?county=",selected_county_filter()))
   # })
   
-  observeEvent(input$copy_link,{
-    shinyalert(title = "Copy The Link Below", text=paste0("https://compassred.shinyapps.io/project_ditto/?county=",selected_county_filter()), type = "info")
-  })
+  onclick("copy_link",shinyalert(title = "Copy The Link Below", text=paste0("https://compassred.shinyapps.io/project_ditto/?county=",selected_county_filter()), type = "info"))
   
   #print out currently selected county
   observe({
