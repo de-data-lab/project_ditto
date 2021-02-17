@@ -13,6 +13,14 @@ data <-
   clean_names()
 
 
+# Download county stats
+
+county_stats_blob <- download_blob(container, src="project_ditto/county_stats.csv", dest=NULL, overwrite=FALSE)
+county_stats <- 
+  read_csv(county_stats_blob) %>% 
+  select(fips, name, total_pop, per_urban, per_rural)
+
+
 # gather, aggregate, and then spread 
 
 data_gathered <-

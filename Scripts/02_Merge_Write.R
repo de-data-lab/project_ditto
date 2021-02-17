@@ -1,14 +1,6 @@
 # Merge relevant county data and output individual csv files
 
 
-# Download county stats
-
-county_stats_blob <- download_blob(container, src="project_ditto/county_stats.csv", dest=NULL, overwrite=FALSE)
-county_stats <- 
-  read_csv(county_stats_blob) %>% 
-  select(fips, name, total_pop, per_urban, per_rural)
-
-
 # Gather distance data
 
 distance_gathered <-

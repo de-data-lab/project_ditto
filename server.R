@@ -26,9 +26,7 @@ server <- function(input, output, session) {
   #ditto calculation
   ditto_output <- eventReactive(selected_county_filter(),ignoreNULL = F,{
     print("ditto running")
-    out <- ditto(req(selected_county_filter()),n = 5000)
-    print(head(out,5))
-    out
+    ditto(req(selected_county_filter()),n = 5000)
   })
   
   #define layover html div to add to map
@@ -133,8 +131,8 @@ server <- function(input, output, session) {
   output$table <- DT::renderDataTable(server = T,{
 
     tibble::tribble(
-      ~fips, ~comp, ~distance, ~name,  ~total_pop,~total_cases,~sparkline,
-      "12345","12345", 1, "Placeholder", 123456,1500, "<div></div>"
+      ~fips, ~comp, ~distance, ~name,  ~total_pop,~total_cases, ~cases_per, ~sparkline,
+      "12345","12345", 1, "Placeholder", 123456,1500,500.00, "<div></div>"
     ) %>% 
       arrange(desc(distance)) %>% 
       select(-fips,-comp,
@@ -142,7 +140,8 @@ server <- function(input, output, session) {
              Similarity = distance,
              `Total Population` = total_pop,
              `Total Cases` = total_cases,
-             `Case Trend` = sparkline
+             `Total Cases per Capita` = cases_per,
+             `New Case Trend` = sparkline
       ) %>% 
       
       DT::datatable(rownames= FALSE,escape = FALSE,options = list(pageLength = 100, scrollY = "300px",order = list(list(0, 'desc')),fnDrawCallback = htmlwidgets::JS(
@@ -150,8 +149,8 @@ server <- function(input, output, session) {
       ))) %>% 
       spk_add_deps() %>% 
       DT::formatPercentage(c('Similarity'), 2) %>% 
-      DT::formatRound(c('Total Population','Total Cases'),0) %>% 
-      DT::formatString(c('County','Case Trend'))
+      DT::formatRound(c('Total Population','Total Cases','Total Cases per Capita'),0) %>% 
+      DT::formatString(c('County','New Case Trend'))
 
   })
   
@@ -163,13 +162,14 @@ server <- function(input, output, session) {
     
     updated_data <- ditto_output() %>% 
     arrange(desc(distance)) %>% 
-    left_join(data_sparklines %>% select(fips,total_cases,sparkline),by = c("comp" = "fips")) %>% 
+    left_join(data_sparklines %>% select(fips,total_cases,cases_per,sparkline),by = c("comp" = "fips")) %>% 
     select(-fips,-comp,-per_urban,-per_rural,
            County = name,
            Similarity = distance,
            `Total Population` = total_pop,
            `Total Cases` = total_cases,
-           `Case Trend` = sparkline
+           `Total Cases per Capita` = cases_per,
+           `New Case Trend` = sparkline
     )
     
     DT::replaceData(dt_proxy, updated_data,rownames= FALSE,resetPaging = T,clearSelection = T)
@@ -195,7 +195,7 @@ server <- function(input, output, session) {
       unique() %>% 
       pull()
     
-    paste0(glue::glue("New COVID-19 Cases in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
+    paste0(glue::glue("New COVID-19 Cases per Capita (100k) in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
   })
 
 }
