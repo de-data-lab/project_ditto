@@ -17,7 +17,9 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     leafletjs,
     useShinyjs(),
     useShinyalert(),
+    tags$head(includeHTML("www/ga.html")), #google analytics
     extendShinyjs(text = jscode, functions = c()),
+    tags$script(src="leaflet_sleep.js"), #avoid bad scroll ineraction with leaflet http://cliffcloud.github.io/Leaflet.Sleep/
     tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
     shinyWidgets::useShinydashboard()
   ),
@@ -46,7 +48,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     
   ),
   tabPanel("FAQ",
-           tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo_white.png",height = "75px",style = "margin-bottom:10px;")),
+           tags$a(href = "https://ddil.ai",target="_blank",tags$img(src = "ddil_logo.png",height = "100px",style = "margin-bottom:10px;")),
            tags$br(),
            tags$a("Learn More",href = "https://ddil.ai",target="_blank"),
            tags$br(),
