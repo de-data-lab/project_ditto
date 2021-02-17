@@ -34,6 +34,11 @@ data_aggregated <-
   ungroup() %>% 
   mutate(cases = ifelse(cases < 0, 0, cases))
 
+max_date <- max(data_aggregated$week)
+
+data_aggregated <-
+  data_aggregated %>% 
+  filter(week < max_date)
 
 # Spread back to have on row per county
 
