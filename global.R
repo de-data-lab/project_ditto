@@ -14,6 +14,7 @@ library(shinyjs)
 library(shinyalert)
 
 library(sparkline)
+library(shinythemes)
 
 #read in functions
 source("Functions/ditto.R")

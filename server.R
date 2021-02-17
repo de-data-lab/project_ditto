@@ -24,7 +24,7 @@ server <- function(input, output, session) {
   })
   
   #change background color of dropdown
-  shinyjs::runjs("document.querySelector('div.selectize-input').style.backgroundColor = '#ECF0F5';")
+  #shinyjs::runjs("document.querySelector('div.selectize-input').style.backgroundColor = '#ECF0F5';")
   
   #ditto calculation
   ditto_output <- eventReactive(selected_county_filter(),ignoreNULL = F,{
