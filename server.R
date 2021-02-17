@@ -26,7 +26,9 @@ server <- function(input, output, session) {
   #ditto calculation
   ditto_output <- eventReactive(selected_county_filter(),ignoreNULL = F,{
     print("ditto running")
-    ditto(req(selected_county_filter()),n = 5000)
+    out <- ditto(req(selected_county_filter()),n = 5000)
+    print(head(out,5))
+    out
   })
   
   #define layover html div to add to map
@@ -95,6 +97,7 @@ server <- function(input, output, session) {
   #recolor map shapes when new county is selected
   observeEvent(selected_county_filter(),{
     print("leaflet proxy activate")
+    shinyjs::runjs("document.getElementById('heatmap_title').style.color = 'lightgrey';")
     plot_data <- county_shapes %>% 
       left_join(ditto_output() %>% select(comp,distance),by = c("GEOID"="comp"))
     
@@ -122,6 +125,8 @@ server <- function(input, output, session) {
                 opacity = 1,layerId = "county_map_legend",
                 labFormat = labelFormat(suffix = "%",transform = function(x) sort(x*100, decreasing = T))
       )
+    
+    shinyjs::runjs("document.getElementById('heatmap_title').style.removeProperty('color');")
   })
   
   #data table output
