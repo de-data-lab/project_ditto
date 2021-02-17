@@ -1,1 +1,0 @@
-L.Map.scrollWheelZoom.disable();

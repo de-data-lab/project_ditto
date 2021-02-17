@@ -19,7 +19,6 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     useShinyalert(),
     tags$head(includeHTML("www/ga.html")), #google analytics
     extendShinyjs(text = jscode, functions = c()),
-    tags$script(src="leaflet_scroll.js"), #avoid bad scroll ineraction with leaflet
     tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
     shinyWidgets::useShinydashboard()
   ),

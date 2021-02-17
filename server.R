@@ -23,9 +23,6 @@ server <- function(input, output, session) {
     updateSelectizeInput(session, "county", selected = "")
   })
   
-  #change background color of dropdown
-  #shinyjs::runjs("document.querySelector('div.selectize-input').style.backgroundColor = '#ECF0F5';")
-  
   #ditto calculation
   ditto_output <- eventReactive(selected_county_filter(),ignoreNULL = F,{
     print("ditto running")
@@ -52,7 +49,8 @@ server <- function(input, output, session) {
       htmlwidgets::onRender("function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this)
     }") %>% 
-      addControl(layover_div,position = "bottomleft",layerId = "mouseover_layer")
+      addControl(layover_div,position = "bottomleft",layerId = "mouseover_layer") %>% 
+      leaflet.extras::suspendScroll()
   })
   
   #if map is clicked, set values
