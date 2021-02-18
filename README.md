@@ -28,4 +28,5 @@ The `global.R` file has the packages required to run the Shiny app. Please note 
 After creating the .Renviron file, you can run the app in a docker container.
 
 `docker build -t project_ditto .`
+
 `docker run --rm -p 3838:3838 project_ditto`
