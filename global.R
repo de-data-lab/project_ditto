@@ -12,7 +12,6 @@ library(shinyWidgets)
 library(DT)
 library(shinyjs)
 library(shinyalert)
-
 library(sparkline)
 library(shinythemes)
 
@@ -21,7 +20,7 @@ source("Functions/ditto.R")
 source("Functions/plot_cases.R")
 source("Functions/leaflet_proxy_adds.R")
 
-# Create endpoint for azure storage
+#create endpoint for azure storage
 endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
 container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
 

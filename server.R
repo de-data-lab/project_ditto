@@ -1,26 +1,12 @@
 server <- function(input, output, session) {
   
+  
+  #DATA####
+  
+  
   #store selected county in a reactive (detect NULL values)
   selected_county_filter <- reactive({
     req(input$county)
-  })
-  
-  #when a county is selected, update query param
-  #issue with shinyapps deployment here
-  # observeEvent(selected_county_filter(),ignoreInit = T,ignoreNULL = T,{
-  #   updateQueryString(paste0("?county=",selected_county_filter()))
-  # })
-  
-  onclick("copy_link",shinyalert(title = "Copy The Link Below", text=paste0("https://compassred.shinyapps.io/project_ditto/?county=",selected_county_filter()), type = "info"))
-  
-  #print out currently selected county
-  observe({
-    cat("Currently Selected County:",selected_county_filter(),"\n")
-  })
-  
-  #when you click the county filter, remove the text
-  onclick("county", {
-    updateSelectizeInput(session, "county", selected = "")
   })
   
   #ditto calculation
@@ -28,6 +14,10 @@ server <- function(input, output, session) {
     print("ditto running")
     ditto(req(selected_county_filter()),n = 5000)
   })
+  
+  
+  #LEAFLET####
+  
   
   #define layover html div to add to map
   layover_div <- tags$div(
@@ -127,6 +117,10 @@ server <- function(input, output, session) {
     shinyjs::runjs("document.getElementById('heatmap_title').style.removeProperty('color');")
   })
   
+  
+  #DATATABLE####
+  
+  
   #data table output
   output$table <- DT::renderDataTable(server = T,{
 
@@ -176,15 +170,36 @@ server <- function(input, output, session) {
     
   })
   
-  #plot cases over time
-  output$trend <- renderPlotly({
-    comparison_fips <- ditto_output() %>% 
+  #TRENDLINE####
+  
+  #comparison fips in a reactive
+  comparison_fips <- reactive({
+    ditto_output() %>% 
       filter(comp != selected_county_filter()) %>% 
       head(10) %>% 
       select(comp) %>% 
       pull()
-
-    plot_cases(data_aggregated,selected_county_filter(),comparison_fips)
+  })
+  
+  #plot both versions
+  output$trend <- renderPlotly({
+    plot_cases(data_aggregated,selected_county_filter(),comparison_fips(),cases_per)
+  })
+  
+  output$trend_raw <- renderPlotly({
+    plot_cases(data_aggregated,selected_county_filter(),comparison_fips(),cases)
+  })
+  
+  #set switch to show respective plot
+  observe({
+    if(!input$capita_switch){
+      shinyjs::hide(id = "parent_plotly")
+      shinyjs::show(id = "parent_plotly_raw")
+    }
+    if(input$capita_switch){
+      shinyjs::show(id = "parent_plotly")
+      shinyjs::hide(id = "parent_plotly_raw")
+    }
   })
   
   #render plot title
@@ -195,7 +210,29 @@ server <- function(input, output, session) {
       unique() %>% 
       pull()
     
-    paste0(glue::glue("New COVID-19 Cases per 100k People in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
+    paste0(glue::glue("New COVID-19 Cases in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
   })
-
+  
+  #change position of toggle
+  observe({
+    shinyjs::runjs("document.getElementsByClassName('bootstrap-switch-id-capita_switch')[0].parentNode.setAttribute('style','display: inline-block; position: absolute; top: 50px; left: 10px;');")
+  })
+  
+  
+  #MISC####
+  
+  
+  #share button functionality
+  onclick("copy_link",shinyalert(title = "Copy The Link Below", text=paste0("https://compassred.shinyapps.io/project_ditto/?county=",selected_county_filter()), type = "info"))
+  
+  #print out currently selected county
+  observe({
+    cat("Currently Selected County:",selected_county_filter(),"\n")
+  })
+  
+  #when you click the county filter, remove the text
+  onclick("county", {
+    updateSelectizeInput(session, "county", selected = "")
+  })
+  
 }
