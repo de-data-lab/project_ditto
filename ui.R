@@ -43,7 +43,11 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     #TABLE OF SIMILARITY AND PLOT
     fluidRow(
     box(title = "Table of Similarity",DT::dataTableOutput("table") %>% shinycssloaders::withSpinner()),
-    box(title = htmlOutput("plotly_title"),plotlyOutput("trend") %>% shinycssloaders::withSpinner())
+    box(title = htmlOutput("plotly_title"),
+        tags$div(plotlyOutput("trend") %>% shinycssloaders::withSpinner(),id="parent_plotly"),
+        shinyjs::hidden(tags$div(plotlyOutput("trend_raw") %>% shinycssloaders::withSpinner(),id="parent_plotly_raw")),
+        shinyWidgets::switchInput("capita_switch",label = NULL,value = T,onLabel = "per 100k",offLabel = "Raw Count",onStatus = "primary",offStatus = "primary",inline = T,size = "mini")
+        ),
     )
     
   ),
