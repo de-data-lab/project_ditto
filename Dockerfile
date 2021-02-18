@@ -7,7 +7,7 @@ libpq-dev &&\
 apt-get install -y gdal-bin &&\
 apt-get install libudunits2-dev -y
 
-RUN R -e 'install.packages(c("leaflet","shinycssloaders","sf","AzureStor","shinydashboard","plotly","htmlwidgets","shinyWidgets","DT","shinyjs","shinyalert","sparkline","shinythemes"))'
+RUN R -e 'install.packages(c("leaflet","shinycssloaders","sf","AzureStor","shinydashboard","plotly","htmlwidgets","shinyWidgets","DT","shinyjs","shinyalert","sparkline","shinythemes","tigris"))'
 
 
 # Install Packages from GH

@@ -4,6 +4,12 @@ server <- function(input, output, session) {
   #DATA####
   
   
+  #read in covid cases
+  data_aggregated <- AzureStor::storage_load_rds(container,"project_ditto/saved_rds/data_aggregated.RDS")
+  
+  #read in sparkline df
+  data_sparklines <- AzureStor::storage_load_rds(container,"project_ditto/saved_rds/data_sparklines.RDS")
+  
   #store selected county in a reactive (detect NULL values)
   selected_county_filter <- reactive({
     req(input$county)
