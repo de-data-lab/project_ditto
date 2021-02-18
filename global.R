@@ -15,6 +15,9 @@ library(shinyalert)
 library(sparkline)
 library(shinythemes)
 
+#read env vars
+readRenviron(".Renviron")
+
 #read in functions
 source("Functions/ditto.R")
 source("Functions/plot_cases.R")
