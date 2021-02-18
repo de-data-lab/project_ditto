@@ -20,6 +20,11 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     tags$head(includeHTML("www/ga.html")), #google analytics
     tags$head(includeCSS("www/bootstrap_alignment.css")),
     extendShinyjs(text = jscode, functions = c()),
+    
+    #better leaflet gesture handling https://github.com/elmarquis/Leaflet.GestureHandling
+    tags$link(rel="stylesheet",href="leaflet-gesture-handling.min.css",type="text/css"),
+    tags$script(src="leaflet-gesture-handling.min.js"),
+    
     tags$head(tags$style("#county {background-color: #ECF0F5 !important};")),
     shinyWidgets::useShinydashboard()
   ),

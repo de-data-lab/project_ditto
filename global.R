@@ -18,7 +18,7 @@ library(shinythemes)
 #read in functions
 source("Functions/ditto.R")
 source("Functions/plot_cases.R")
-source("Functions/leaflet_proxy_adds.R")
+source("Functions/leaflet_proxy_adds.R") #https://github.com/rstudio/leaflet/issues/496#issuecomment-650122985
 
 #create endpoint for azure storage
 endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
