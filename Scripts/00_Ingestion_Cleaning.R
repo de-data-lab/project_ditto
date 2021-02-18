@@ -1,5 +1,6 @@
 ## Data Ingestion Script
 
+library(tidyverse)
 library(readr)
 library(stringr)
 library(janitor)

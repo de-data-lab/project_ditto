@@ -14,6 +14,7 @@ library(shinyjs)
 library(shinyalert)
 library(sparkline)
 library(shinythemes)
+library(tigris)
 
 #read env vars
 readRenviron(".Renviron")
@@ -28,18 +29,20 @@ endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.gete
 container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
 
 #read in county geo shapes and county list
-county_shapes <- readRDS("data/county_shapes.RDS")
+county_shapes <- tigris::counties(cb = T,resolution = "5m")
 county_list <- county_shapes %>% as.data.frame() %>% select(STATEFP,NAME,GEOID) %>% arrange(NAME)
 
 #read in state shape data
-states_list <- readRDS("data/states.RDS") %>% arrange(NAME)
+states_list <- tigris::states(cb = T,resolution = "5m") %>% 
+  select(NAME,STATEFP) %>% 
+  filter(NAME != "Commonwealth of the Northern Mariana Islands") %>%
+  arrange(NAME)
 
 #read in naming lookup table
-full_county_names_list <- readRDS("data/full_county_names_list.RDS")
+full_county_names_list <- county_shapes %>% select(GEOID,COUNTY_NAME = NAME,STATEFP) %>% 
+  as.data.frame() %>% 
+  select(-geometry) %>% 
+  left_join(states_list %>% select(STATEFP,STATE_NAME = NAME),by="STATEFP") %>% 
+  select(-geometry) %>% 
+  mutate(full_county_name = paste0(COUNTY_NAME,", ",STATE_NAME))
 full_county_names_list_for_input <- split(full_county_names_list %>% select(full_county_name,GEOID) %>% deframe(),full_county_names_list$STATE_NAME)
-
-#read in covid cases
-data_aggregated <- readRDS("data/data_aggregated.RDS")
-
-#read in sparkline df
-data_sparklines <- readRDS("data/data_sparklines.RDS")

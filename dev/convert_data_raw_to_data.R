@@ -1,6 +1,0 @@
-dir.create("data", showWarnings = FALSE)
-source("data-raw/pull_counties.R")
-source("data-raw/pull_states.R")
-source("data-raw/county_name_lookup.R")
-source("data-raw/save_covid_cases.R")
-source("data-raw/save_sparklines.R")
