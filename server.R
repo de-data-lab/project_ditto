@@ -27,7 +27,7 @@ server <- function(input, output, session) {
   #map output
   output$county_map <- renderLeaflet({
     print("rendering leaflet init")
-    leaflet(options = leafletOptions(zoomControl = F,attributionControl = FALSE,worldCopyJump = TRUE, scrollWheelZoom = F)) %>% 
+    leaflet(options = leafletOptions(zoomControl = F,attributionControl = FALSE,worldCopyJump = TRUE, scrollWheelZoom = F,gestureHandling = T)) %>% 
       addProviderTiles(providers$CartoDB.Positron, group = "Canvas",options = providerTileOptions(minZoom = 4)) %>%
       setView(lat = 38, lng = -95.5, zoom = 4) %>% 
       addPolygons(data = county_shapes$geometry,stroke = F,weight = 0, smoothFactor = 0.2, fillOpacity = 0,opacity = 0,
@@ -39,8 +39,7 @@ server <- function(input, output, session) {
       htmlwidgets::onRender("function(el, x) {
         L.control.zoom({ position: 'topright' }).addTo(this)
     }") %>% 
-      addControl(layover_div,position = "bottomleft",layerId = "mouseover_layer") %>% 
-      leaflet.extras::suspendScroll()
+      addControl(layover_div,position = "bottomleft",layerId = "mouseover_layer")
   })
   
   #if map is clicked, set values
