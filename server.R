@@ -81,7 +81,7 @@ server <- function(input, output, session) {
     if(mc["name"] == ""){
       runjs("document.getElementById('mouseover_county_text').innerHTML = '';")
     } else {
-    contents <- HTML(glue::glue("<b>{mc[\"name\"]}</b><br><b>Similarity:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br><b>Total Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}"))
+    contents <- HTML(glue::glue("<b>{mc[\"name\"]}</b><br><b>Similarity:</b> {scales::percent(as.numeric(mc[\"distance\"]),.01)}<br><b>Population:</b> {scales::comma(as.numeric(mc[\"total_pop\"]),1)}"))
     runjs(paste0("document.getElementById('mouseover_county_text').innerHTML = \"",contents,"\";"))
     }
   })
@@ -138,9 +138,9 @@ server <- function(input, output, session) {
       select(-fips,-comp,
              County = name,
              Similarity = distance,
-             `Total Population` = total_pop,
-             `Total Cases` = total_cases,
-             `Total Cases per Capita` = cases_per,
+             `Population` = total_pop,
+             `Cases` = total_cases,
+             `Cases per 100k People` = cases_per,
              `New Case Trend` = sparkline
       ) %>% 
       
@@ -149,7 +149,7 @@ server <- function(input, output, session) {
       ))) %>% 
       spk_add_deps() %>% 
       DT::formatPercentage(c('Similarity'), 2) %>% 
-      DT::formatRound(c('Total Population','Total Cases','Total Cases per Capita'),0) %>% 
+      DT::formatRound(c('Population','Cases','Cases per 100k People'),0) %>% 
       DT::formatString(c('County','New Case Trend'))
 
   })
@@ -166,9 +166,9 @@ server <- function(input, output, session) {
     select(-fips,-comp,-per_urban,-per_rural,
            County = name,
            Similarity = distance,
-           `Total Population` = total_pop,
-           `Total Cases` = total_cases,
-           `Total Cases per Capita` = cases_per,
+           `Population` = total_pop,
+           `Cases` = total_cases,
+           `Cases per 100k People` = cases_per,
            `New Case Trend` = sparkline
     )
     
@@ -195,7 +195,7 @@ server <- function(input, output, session) {
       unique() %>% 
       pull()
     
-    paste0(glue::glue("New COVID-19 Cases per Capita (100k) in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
+    paste0(glue::glue("New COVID-19 Cases per 100k People in <b style=\"color: #E83536;\">{selected_county_full_name}</b> vs. <span style=\"color: #9e9e9e;\">Most Similar Counties</b>"))
   })
 
 }
