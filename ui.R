@@ -52,7 +52,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     
     #HEATMAP OF SIMILARITY
     fluidRow(
-      shinydashboardPlus::box(width = 12,id="county_map_box",title = HTML("<span id='heatmap_title'>Heatmap of Similarity <span style=\"font-size: 12px;\">(click on any county to change selection, hover over any county to see comparison)</span></span>"),leafletOutput("county_map") %>% htmlwidgets::prependContent(legend_html_fix) %>% shinycssloaders::withSpinner(),enable_dropdown=T,dropdownMenu = tags$span(actionLink("copy_link","Share",icon = icon("share"),style="color:#97A0B3;"))) %>% introBox(data.step=2,data.intro="This is the next box")
+      shinydashboardPlus::box(width = 12,id="county_map_box",title = HTML("<span id='heatmap_title'>Heatmap of Similarity <span style=\"font-size: 12px;\">(click on any county to change selection, hover over any county to see comparison)</span></span>"),leafletOutput("county_map") %>% htmlwidgets::prependContent(legend_html_fix) %>% shinycssloaders::withSpinner(),enable_dropdown=T,dropdownMenu = tags$span(actionLink("copy_link","Share",icon = icon("share"),style="color:#97A0B3;")))
     ),
     
     #TABLE OF SIMILARITY AND PLOT
