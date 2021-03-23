@@ -25,7 +25,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
     tags$style(HTML(
       ".introjs-tooltip {
       max-width: 100%;
-      min-width: 320px;
+      min-width: 500px;
     }"
     )),
     extendShinyjs(text = jscode, functions = c()),
@@ -79,10 +79,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                                              Counties that are most similar to yours will be highlighted in yellow, while less similar counties will be
                                              highlighted in purple."),
            
-           # Directions
-           tags$h2("Directions"),
-           tags$p("Select a county from the drop down menu or by clicking on a county on the map.
-                                             Similarity scores will be automatically updated based upon your selection."),
+           actionButton("restart_intro_js","Show Introduction Overlay"),
            
            # Sourcing
            tags$h2("Sourcing"),

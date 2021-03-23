@@ -240,4 +240,10 @@ server <- function(input, output, session) {
     updateSelectizeInput(session, "county", selected = "")
   })
   
+  #when you click on the "Show Introduction Overlay" button, relaunch the intro.js experience
+  observeEvent(input$restart_intro_js,{
+    shinyjs::runjs("$('a[data-value=\\'Similarity\\']').trigger('click');")
+    shinyjs::runjs("launchIntroJs();")
+  })
+  
 }
