@@ -15,16 +15,17 @@ jobs:
        
     - name: Setup dependencies
       run: |
-        install.packages('janitor')
-        install.packages("src/AzureStor.zip",lib=".",repos=NULL, verbose = TRUE)
-        install.packages("tidyverse")
-        install.packages("readr")
+        R -e 'install.packages("renv")' 
+        R -e 'renv::restore()'
+    
+    - name: Install dependencies
+      run: |
+        remotes::install_deps(dependencies = TRUE)
       shell: Rscript {0}
-       
+        
     - name: Update Files
       env:
           repo_token: ${{secrets.GITHUB_TOKEN}}
       run: |
-        source("update_death_azure.R")
-      shell: Rscript {0}
+        R -e 'renv::run("update_death_azure.R")'
         
