@@ -12,5 +12,5 @@ jobs:
     - uses: actions/checkout@v1
     - name: Running
       run: |
-        echo "Running!"
+        echo "Running Now!"
         
