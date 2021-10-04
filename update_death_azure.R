@@ -12,7 +12,7 @@ print("Running Script to update files")
 source("Scripts/00_Ingestion_DeathCleaning.R")
 source("Scripts/01_Compute_Distance.R")
 source("Scripts/02_Merge_Write.R")
-
+print("ran all scripts========================================")
 #Cases tidy format
 full_county_names_list <- tigris::counties(cb = T,resolution = "5m") %>%
   select(GEOID,COUNTY_NAME = NAME,STATEFP) %>% 
