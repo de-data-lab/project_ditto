@@ -13,10 +13,10 @@ jobs:
     - uses: actions/checkout@v1
     - uses: r-lib/actions/setup-r@master
        
-    -name: Setup dependencies
-     run: |
-       R -e 'install.packages("renv")'
-       R -e 'renv::restore()'
+    - name: Setup dependencies
+      run: |
+        R -e 'install.packages("renv")'
+        R -e 'renv::restore()'
        
     - name: Update Files
       env:
