@@ -10,7 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Running
+    
+    - name: Setup R
+       uses: r-lib/actions/setup-r@master
+       
+    -name: Setup dependencies
+        run: |
+          R -e 'install.packages("renv")'
+          R -e 'renv::restore()'
+       
+    - name: Update Files
+      env:
+        repo_token: ${{secrets.GITHUB_TOKEN}}
       run: |
         echo "Running Now!"
         
