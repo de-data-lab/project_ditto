@@ -1,4 +1,4 @@
-name: Master
+name: ditto-file-update
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '*/5 * * * *'
 jobs:
-  build:
+  run:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
