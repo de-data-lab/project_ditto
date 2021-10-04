@@ -7,53 +7,20 @@ on:
     - cron: '*/5 * * * *'
 jobs:
   run:
-    runs-on: ${{ matrix.config.os }}
-
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {os: ubuntu-latest,   r: 'release'}
-
-    env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      RSPM: ${{ matrix.config.rspm }}
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
+    runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: r-lib/actions/setup-r@master
-        with:
-          r-version: ${{ matrix.config.r }}
-          http-user-agent: ${{ matrix.config.http-user-agent }}
-
-      - uses: r-lib/actions/setup-pandoc@master
-
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          install.packages('sessioninfo')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-
-      - name: Cache R packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      - name: Install dependencies
-        run: |
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
-          
-      - name: Generate data
-        run: |
-          source("update_death_azure.R")
-        shell: Rscript {0} 
+    - uses: actions/checkout@v1
+    - uses: r-lib/actions/setup-r@master
+       
+    - name: Setup dependencies
+      run: |
+        R -e 'install.packages("renv")' 
+        R -e 'renv::restore()'
+        
+    - name: Update Files
+      env:
+          repo_token: ${{secrets.GITHUB_TOKEN}}
+      run: |
+        R -e 'renv::run("update_death_azure.R")'
         
