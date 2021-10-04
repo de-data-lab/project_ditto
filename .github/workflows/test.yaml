@@ -16,7 +16,7 @@ jobs:
     - name: Setup dependencies
       run: |
         install.packages('janitor')
-        install.packages("AzureStor")
+        install.packages("src/AzureStor.zip",lib=".",repos=NULL, verbose = TRUE)
         install.packages("tidyverse")
         install.packages("readr")
       shell: Rscript {0}
