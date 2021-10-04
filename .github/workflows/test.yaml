@@ -18,8 +18,6 @@ jobs:
         install.packages('dplyr')
        
     - name: Update Files
-      env:
-        repo_token: ${{secrets.GITHUB_TOKEN}}
       run: |
         echo "Running Now!"
         
