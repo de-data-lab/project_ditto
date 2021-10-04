@@ -8,11 +8,10 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    container: docker://dvcorg/cml:latest
     steps:
     - uses: actions/checkout@v1
-    
-    - name: Setup R
-       uses: r-lib/actions/setup-r@master
+    - uses: r-lib/actions/setup-r@master
        
     -name: Setup dependencies
         run: |
