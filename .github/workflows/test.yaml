@@ -22,5 +22,6 @@ jobs:
       env:
           repo_token: ${{secrets.GITHUB_TOKEN}}
       run: |
-        R -e 'renv::run("update_death_azure.R")'
+        source("update_death_azure.R")
+      shell: Rscript {0}
         
