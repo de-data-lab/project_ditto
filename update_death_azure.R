@@ -1,11 +1,11 @@
 print("Running Script to update files")
 #get connection creds
-readRenviron(".Renviron")
+#readRenviron(".Renviron")
 
 library(AzureStor)
 
-endpoint <- storage_endpoint(Sys.getenv('https://ddilstorage.blob.core.windows.net'), key = Sys.getenv('DV6J/0cgBSX6k2QjjEGyZ6HP7U1hK7j6uW6BXELZPbA9/o6d4nPKlRajBdqoQW8UAc/DoRH+k4ETxyveQGZIbw=='))
-container <- storage_container(endpoint, Sys.getenv('ddil-stg'))
+endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
+container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
 
 
 #Update CSVs in Azure
