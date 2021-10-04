@@ -15,8 +15,8 @@ jobs:
        
     - name: Setup dependencies
       run: |
-        R -e 'install.packages("renv")'
-        R -e 'renv::restore()'
+        install.packages('janitor')
+      shell: Rscript {0}
        
     - name: Update Files
       env:
