@@ -19,6 +19,8 @@ jobs:
         R -e 'renv::restore()'
        
     - name: Update Files
+      env:
+          repo_token: ${{secrets.GITHUB_TOKEN}}
       run: |
-        echo "Running Now 2!"
+        R -e 'renv::run("update_death_azure.R")'
         

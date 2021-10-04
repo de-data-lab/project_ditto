@@ -16,15 +16,6 @@
       "Repository": "RSPM",
       "Hash": "d0509913b27ea898189ee664b6030dc2"
     },
-    "janitor": {
-      "Package": "janitor",
-      "Version": "2.1.0",
-      "Source": "Repository",
-      "Repository": "CRAN,     
-    },
-    "tidyverse": {
-      "Package": "tidyverse"
-    },
     "lattice": {
       "Package": "lattice",
       "Version": "0.20-41",
