@@ -17,7 +17,7 @@ library(shinythemes)
 library(tigris)
 
 #read env vars
-readRenviron(".Renviron")
+#readRenviron(".Renviron")
 
 #read in functions
 source("Functions/ditto.R")
@@ -25,8 +25,8 @@ source("Functions/plot_cases.R")
 source("Functions/leaflet_proxy_adds.R") #https://github.com/rstudio/leaflet/issues/496#issuecomment-650122985
 
 #create endpoint for azure storage
-endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
-container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
+endpoint <- storage_endpoint(os.environ('CONTAINER_URL'), key = os.environ('CONTAINER_KEY'))
+container <- storage_container(endpoint, os.environ('CONTAINER_NAME'))
 
 #read in county geo shapes and county list
 county_shapes <- tigris::counties(cb = T,resolution = "5m")
