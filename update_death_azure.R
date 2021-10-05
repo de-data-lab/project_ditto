@@ -4,8 +4,6 @@ print("Running Script to update files")
 
 library(AzureStor)
 
-endpoint <- storage_endpoint('https://ddilstorage.blob.core.windows.net', key = 'DV6J/0cgBSX6k2QjjEGyZ6HP7U1hK7j6uW6BXELZPbA9/o6d4nPKlRajBdqoQW8UAc/DoRH+k4ETxyveQGZIbw==')
-container <- storage_container(endpoint, 'ddil-stg')
 
 
 #Update CSVs in Azure
