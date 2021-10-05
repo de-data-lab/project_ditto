@@ -28,7 +28,7 @@ jobs:
         R -e 'install.packages("lsa")'
         R -e 'install.packages("AzureStor")'
         R -e 'install.packages("sparkline")'
-        R -e 'install.packages("Tigris")'
+        R -e 'install.packages("tigris")'
     # Run R script
     - name: update
       env: 
