@@ -21,6 +21,13 @@ jobs:
         R -e 'install.packages("tidyverse")'
         R -e 'install.packages("janitor")'
         R -e 'install.packages("rvest")'
+        R -e 'install.packages("readr")'
+        R -e 'install.packages("stringr")'
+        R -e 'install.packages("lubridate")'
+        R -e 'install.packages("dplyr")'
+        R -e 'install.packages("lsa")'
+        R -e 'install.packages("AzureStor")'
+        R -e 'install.packages("sparkline")'
     # Run R script
     - name: update
       env: 

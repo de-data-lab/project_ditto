@@ -2,7 +2,7 @@ print("Running Script to update files")
 #get connection creds
 #readRenviron(".Renviron")
 
-#library(AzureStor,lib.loc=".", verbose=TRUE)
+library(AzureStor)
 
 #endpoint <- storage_endpoint(Sys.getenv("storage_container_url"), key = Sys.getenv("storage_container_key"))
 #container <- storage_container(endpoint, Sys.getenv("storage_container_name"))
