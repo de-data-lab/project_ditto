@@ -4,8 +4,8 @@ print("Running Script to update files")
 
 library(AzureStor)
 
-endpoint <- storage_endpoint(os.environ('CONTAINER_URL'), key = os.environ('CONTAINER_KEY'))
-container <- storage_container(endpoint, os.environ('CONTAINER_NAME'))
+endpoint <- storage_endpoint(Sys.getenv('CONTAINER_URL'), key = Sys.getenv('CONTAINER_KEY'))
+container <- storage_container(endpoint, Sys.getenv('CONTAINER_NAME'))
 
 
 #Update CSVs in Azure
