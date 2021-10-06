@@ -25,8 +25,8 @@ source("Functions/plot_cases.R")
 source("Functions/leaflet_proxy_adds.R") #https://github.com/rstudio/leaflet/issues/496#issuecomment-650122985
 
 #create endpoint for azure storage
-endpoint <- storage_endpoint(os.environ('CONTAINER_URL'), key = os.environ('CONTAINER_KEY'))
-container <- storage_container(endpoint, os.environ('CONTAINER_NAME'))
+endpoint <- storage_endpoint(Sys.getenv('CONTAINER_URL'), key = Sys.getenv('CONTAINER_KEY'))
+container <- storage_container(endpoint, Sys.getenv('CONTAINER_NAME'))
 
 #read in county geo shapes and county list
 county_shapes <- tigris::counties(cb = T,resolution = "5m")
