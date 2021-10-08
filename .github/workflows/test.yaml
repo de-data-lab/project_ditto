@@ -4,11 +4,11 @@ on:
     branches:
       - master
   schedule:
-    - cron: '0 16 * * *'
+    - cron: '30 17 * * *'
 jobs:
   autoupdate:
     # The type of runner that the job will run on
-    runs-on: macos-latest
+    runs-on: windows-latest
 
     # Load repo and install R
     steps:
