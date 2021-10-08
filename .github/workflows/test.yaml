@@ -4,7 +4,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: '0 15 * * *'
+    - cron: '0 16 * * *'
 jobs:
   autoupdate:
     # The type of runner that the job will run on
@@ -29,6 +29,7 @@ jobs:
         R -e 'install.packages("AzureStor")'
         R -e 'install.packages("sparkline")'
         R -e 'install.packages("tigris")'
+        R -e 'install.packages("sf")'
     # Run R script
     - name: update
       env: 
