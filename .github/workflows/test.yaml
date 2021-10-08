@@ -4,7 +4,7 @@ on:
     branches:
       - master
   schedule:
-    - cron: '30 17 * * *'
+    - cron: '30 18 * * *'
 jobs:
   autoupdate:
     # The type of runner that the job will run on
@@ -18,18 +18,20 @@ jobs:
     # Set-up R
     - name: Install packages
       run: |
-        R -e 'install.packages("tidyverse")'
-        R -e 'install.packages("janitor")'
-        R -e 'install.packages("rvest")'
-        R -e 'install.packages("readr")'
-        R -e 'install.packages("stringr")'
-        R -e 'install.packages("lubridate")'
-        R -e 'install.packages("dplyr")'
-        R -e 'install.packages("lsa")'
-        R -e 'install.packages("AzureStor")'
-        R -e 'install.packages("sparkline")'
-        R -e 'install.packages("tigris")'
-        R -e 'install.packages("sf")'
+        install.packages("tidyverse")
+        install.packages("janitor")
+        install.packages("rvest")
+        install.packages("readr")
+        install.packages("stringr")
+        install.packages("lubridate")
+        install.packages("dplyr")
+        install.packages("lsa")
+        install.packages("AzureStor")
+        install.packages("sparkline")
+        install.packages("tigris")
+        install.packages("sf")
+      shell: Rscript {0}
+      
     # Run R script
     - name: update
       env: 
