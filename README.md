@@ -1,5 +1,7 @@
 # Project Ditto
 
+The app is deployed at https://ditto.ddil.ai/
+
 ## Objective
 Tool's objective is to compare a single county's COVID-19 cases to other counties in the US.
 
